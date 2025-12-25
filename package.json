@@ -5,7 +5,7 @@
   "scripts": {
     "test": "vitest"
   },
-  "license": "ISC",
+  "license": "CC0-1.0",
   "author": "Andrea Di Gioacchino",
   "type": "module",
   "dependencies": {
