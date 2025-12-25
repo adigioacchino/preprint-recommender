@@ -4,18 +4,16 @@
   "description": "A package to find latest papers from arXiv that are similar to some 'seed papers' of interest.",
   "license": "ISC",
   "author": "Andrea Di Gioacchino",
-  "type": "commonjs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "type": "module",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@types/node": "^25.0.3",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "fast-xml-parser": "^5.3.3",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "tsx": "^4.21.0"
   }
 }
