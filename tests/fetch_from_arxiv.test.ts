@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fetchDailyPapers } from '../src/fetch_from_arxiv';
+import { fetchDailyPapers } from '../src/services/arxiv.js';
 
 describe('Arxiv Fetcher', () => {
     it.each([

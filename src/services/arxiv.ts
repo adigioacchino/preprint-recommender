@@ -1,13 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-
-export interface ArxivPaper {
-    id: string;
-    title: string;
-    abstract: string;
-    authors: string[];
-    published: Date;
-    link: string;
-}
+import type { ArxivPaper } from '../types.js';
 
 export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<ArxivPaper[]> {
     console.log(`Fetching papers for category: ${category}...`);
@@ -44,7 +36,6 @@ export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<Arxi
 
         // Clean and Map the Data
         // We transform the raw API data into our clean "ArxivPaper" format.
-        // .map() is equivalent to a Python list comprehension [x for x in entries]
         const cleanPapers: ArxivPaper[] = entries.map((entry: any) => ({
             id: entry.id,
             title: entry.title.replace(/\n/g, ' ').trim(), // Remove newlines and trim spaces
