@@ -21,6 +21,10 @@ export async function embedPaper(paper: PreprintPaper, verbose: boolean): Promis
     const response = await genai.models.embedContent({
         model: "gemini-embedding-001",
         contents: [textToEmbed],
+        config: {
+            outputDimensionality: 3072,
+            taskType: "CLUSTERING",
+        },
     });
 
     // Extract and return the embedding vector
