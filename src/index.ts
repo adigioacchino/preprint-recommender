@@ -1,2 +1,5 @@
-export type * from './types.js';
-export * from './services/arxiv.js';
+// Types
+export type { PreprintPaper } from './types.js';
+
+// Services - see src/services/index.ts
+export * from './services';
