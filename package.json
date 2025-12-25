@@ -1,5 +1,5 @@
 {
-  "name": "arxiv-daily-filter",
+  "name": "preprint-recommender",
   "version": "0.0.1",
   "description": "A package to find latest papers from arXiv that are similar to some 'seed papers' of interest.",
   "scripts": {
