@@ -1,7 +1,4 @@
 import { XMLParser } from 'fast-xml-parser';
-import { argv } from 'process';
-import { fileURLToPath } from 'url';
-import path from 'path';
 
 export interface ArxivPaper {
     id: string;
@@ -67,27 +64,4 @@ export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<Arxi
         console.error("Error fetching arxiv data:", error);
         return []; // Return empty list on failure
     }
-}
-
-// --- TEST CODE (To run this file directly) ---
-// This block checks if this file is being run directly
-// An ESM-friendly alternative to `require.main === module`
-const isMainModule = (url: string, argv: string[]) => {
-    // Convert file:// URL to system path
-    const currentFilePath = fileURLToPath(url);
-    // argv[1] is the executed script path. 
-    // We resolve both to absolute paths to be safe.
-    const executedScriptPath = path.resolve(argv[1]);
-
-    return currentFilePath === executedScriptPath;
-};
-
-if (isMainModule(import.meta.url, argv)) {
-    const metaUrl = import.meta.url; // Assign to variable for easier debugging
-    fetchDailyPapers('cs.AI').then(papers => {
-        console.log(`Found ${papers.length} papers.`);
-        if (papers.length > 0) {
-            console.log("First paper title:", papers[0].title);
-        }
-    });
 }
