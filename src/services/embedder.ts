@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import type { PreprintPaper } from "../types.js";
 
-export async function embedPaper(paper: PreprintPaper, verbose: boolean): Promise<number[]> {
+export async function embedPaper(paper: PreprintPaper, verbose: boolean) {
     // Check that the API key is set
     const apiKey = process.env.GENAI_API_KEY;
     if (!apiKey) {
@@ -33,5 +33,6 @@ export async function embedPaper(paper: PreprintPaper, verbose: boolean): Promis
         console.log(`Generated embedding of length ${embedding.length} for paper: ${paper.title}`);
     }
 
-    return embedding;
+    // Add the embedding to the paper object
+    paper.embedding = embedding;
 }

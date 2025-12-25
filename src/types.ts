@@ -4,4 +4,5 @@ export interface PreprintPaper {
     authors: string[];
     published: Date;
     link: string;
+    embedding: number[] | null;
 }

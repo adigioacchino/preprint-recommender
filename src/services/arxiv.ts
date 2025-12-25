@@ -46,7 +46,8 @@ export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<Prep
                 : [entry.author.name],
             // Convert published string to Date object
             published: new Date(entry.published),
-            link: entry.id
+            link: entry.id,
+            embedding: null
         }));
 
         // Only keep papers published in the last 24 hours
