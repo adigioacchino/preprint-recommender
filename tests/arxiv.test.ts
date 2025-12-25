@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fetchDailyPapers } from '../src/services/arxiv.js';
+import { fetchDailyPapers, fetchDailyPapersCategory } from '../src/services/arxiv.js';
 
 describe('Arxiv Fetcher', () => {
     it.each([
@@ -8,7 +8,7 @@ describe('Arxiv Fetcher', () => {
         ['cs.CV'], // Computer Vision
     ])('fetch papers from Arxiv [%s]', async (category) => {
         console.log(`Testing category: ${category}`);
-        const papers = await fetchDailyPapers(category);
+        const papers = await fetchDailyPapersCategory(category);
 
         expect(papers).toBeDefined();
         expect(Array.isArray(papers)).toBe(true);
@@ -35,4 +35,14 @@ describe('Arxiv Fetcher', () => {
         // Sleep for 3 seconds to avoid hitting rate limits
         await new Promise(resolve => setTimeout(resolve, 3000));
     });
+
+    it('fetch papers from Arxiv [multiple categories]', async () => {
+        const categories = ['cs.AI', 'cs.LG', 'cs.CV'];
+        const papers = await fetchDailyPapers(categories);
+
+        expect(papers).toBeDefined();
+        expect(Array.isArray(papers)).toBe(true);
+
+        console.log(`Found ${papers.length} papers across categories: ${categories.join(', ')}.`);
+    }, 15_000);  // Increase timeout for this test 
 });

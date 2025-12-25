@@ -1,7 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import type { PreprintPaper } from '../types.js';
 
-export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<PreprintPaper[]> {
+export async function fetchDailyPapersCategory(category: string): Promise<PreprintPaper[]> {
     console.log(`Fetching papers for category: ${category}...`);
     // Settings
     const MAX_RESULTS = 50; // Number of results to fetch per request
@@ -62,4 +62,23 @@ export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<Prep
         console.error("Error fetching arxiv data:", error);
         return []; // Return empty list on failure
     }
+}
+
+export async function fetchDailyPapers(categories: string[]): Promise<PreprintPaper[]> {
+    let allPapers: PreprintPaper[] = [];
+    for (const category of categories) {
+        const papers = await fetchDailyPapersCategory(category);
+        allPapers = allPapers.concat(papers);
+        // Sleep for 3 seconds to avoid hitting rate limits
+        await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+
+    // Remove duplicate papers based on their link
+    const uniquePapersMap: { [link: string]: PreprintPaper } = {};
+    for (const paper of allPapers) {
+        uniquePapersMap[paper.link] = paper;
+    }
+    allPapers = Object.values(uniquePapersMap);
+
+    return allPapers;
 }
