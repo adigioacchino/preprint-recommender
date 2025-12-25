@@ -49,7 +49,13 @@ export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<Arxi
             link: entry.id
         }));
 
-        return cleanPapers;
+        // Only keep papers published in the last 24 hours
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const recentPapers = cleanPapers.filter(paper => paper.published > oneDayAgo);
+
+        console.log(`Fetched ${recentPapers.length} recent papers from Arxiv in category ${category}.`);
+
+        return recentPapers;
 
     } catch (error) {
         console.error("Error fetching arxiv data:", error);
