@@ -1,7 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
-import type { ArxivPaper } from '../types.js';
+import type { PreprintPaper } from '../types.js';
 
-export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<ArxivPaper[]> {
+export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<PreprintPaper[]> {
     console.log(`Fetching papers for category: ${category}...`);
     // Settings
     const MAX_RESULTS = 50; // Number of results to fetch per request
@@ -35,8 +35,8 @@ export async function fetchDailyPapers(category: string = 'cs.LG'): Promise<Arxi
             : [parsed.feed.entry];
 
         // Clean and Map the Data
-        // We transform the raw API data into our clean "ArxivPaper" format.
-        const cleanPapers: ArxivPaper[] = entries.map((entry: any) => ({
+        // We transform the raw API data into our clean "PreprintPaper" format.
+        const cleanPapers: PreprintPaper[] = entries.map((entry: any) => ({
             id: entry.id,
             title: entry.title.replace(/\n/g, ' ').trim(), // Remove newlines and trim spaces
             abstract: entry.summary.replace(/\n/g, ' ').trim(), // Remove newlines and trim spaces

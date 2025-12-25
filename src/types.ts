@@ -1,5 +1,4 @@
-export interface ArxivPaper {
-    id: string;
+export interface PreprintPaper {
     title: string;
     abstract: string;
     authors: string[];
