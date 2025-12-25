@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A package to find latest papers from arXiv that are similar to some 'seed papers' of interest.",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest run"
   },
   "license": "CC0-1.0",
   "author": "Andrea Di Gioacchino",
