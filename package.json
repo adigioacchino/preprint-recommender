@@ -2,6 +2,9 @@
   "name": "arxiv-daily-filter",
   "version": "0.0.1",
   "description": "A package to find latest papers from arXiv that are similar to some 'seed papers' of interest.",
+  "scripts": {
+    "test": "vitest"
+  },
   "license": "ISC",
   "author": "Andrea Di Gioacchino",
   "type": "module",
@@ -14,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "vitest": "^4.0.16"
   }
 }
