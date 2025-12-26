@@ -1,8 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
-import type { PreprintPaper } from "../types.js";
+import type { PreprintPaper, SeedPaper } from "../types.js";
 
 export async function embedPaper(
-  paper: PreprintPaper,
+  paper: PreprintPaper | SeedPaper,
   verbose: boolean = false
 ): Promise<void> {
   // Check that the API key is set
