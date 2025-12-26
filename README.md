@@ -27,6 +27,18 @@ Then you need to build the project using npm:
 npm run build
 ```
 
+### Preparing seed papers
+
+You need to prepare a folder containing JSON files representing your seed papers.
+Each JSON file should have the following structure:
+
+```json
+{
+  "title": "Title of the seed paper",
+  "abstract": "Abstract of the seed paper"
+}
+```
+
 ### Running the CLI interface
 
 The main command is `npx preprint-recommender run`.
@@ -34,13 +46,14 @@ The main command is `npx preprint-recommender run`.
 You can run it with the following options:
 
 - `-c --categories <categories...>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
+- `-s --seed-folder <folder>`: Folder containing seed paper JSON files.
 - `-l --look-back <days>`: Number of days to look back for papers (default: 1).
 - `-m --max-results <results>`: Maximum number of papers to fetch (default: 50).
 
 Example:
 
 ```bash
-npx preprint-recommender run -c cs.AI cs.LG -l 1 -m 50
+npx preprint-recommender run -c cs.AI cs.LG -s <seed-folder>
 ```
 
 This will fetch the latest 50 papers that have been uploaded to the arXiv in the last day, in the categories cs.AI and cs.LG, and embed them using Google GenAI.
