@@ -1,7 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
 import type { PreprintPaper } from "../types.js";
 
-export async function embedPaper(paper: PreprintPaper, verbose: boolean) {
+export async function embedPaper(
+  paper: PreprintPaper,
+  verbose: boolean = false
+): Promise<void> {
   // Check that the API key is set
   const apiKey = process.env.GENAI_API_KEY;
   if (!apiKey) {

@@ -3,13 +3,20 @@
   "version": "0.0.1",
   "description": "A package to find latest papers from arXiv that are similar to some 'seed papers' of interest.",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "tsc"
+  },
+  "main": "dist/index.js",
+  "bin": {
+    "preprint-recommender": "dist/cli.js"
   },
   "license": "CC0-1.0",
   "author": "Andrea Di Gioacchino",
   "type": "module",
   "dependencies": {
     "@google/genai": "^1.34.0",
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "commander": "^14.0.2",
     "fast-xml-parser": "^5.3.3",
     "typescript": "^5.9.3"
   },
