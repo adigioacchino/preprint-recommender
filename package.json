@@ -17,6 +17,7 @@
     "@google/genai": "^1.34.0",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "commander": "^14.0.2",
+    "fast-cosine-similarity": "^1.2.2",
     "fast-xml-parser": "^5.3.3",
     "typescript": "^5.9.3"
   },
