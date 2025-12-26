@@ -38,13 +38,13 @@ export async function fetchDailyPapersCategory(
 
     // Clean and Map the Data
     // We transform the raw API data into our clean "PreprintPaper" format.
-    const cleanPapers: PreprintPaper[] = entries.map((entry: any) => ({
+    const cleanPapers: PreprintPaper[] = entries.map((entry) => ({
       id: entry.id,
       title: entry.title.replace(/\n/g, " ").trim(), // Remove newlines and trim spaces
       abstract: entry.summary.replace(/\n/g, " ").trim(), // Remove newlines and trim spaces
       // Authors can be a single object or an array, convert accordingly
       authors: Array.isArray(entry.author)
-        ? entry.author.map((author: any) => author.name)
+        ? entry.author.map((author) => author.name)
         : [entry.author.name],
       // Convert published string to Date object
       published: new Date(entry.published),

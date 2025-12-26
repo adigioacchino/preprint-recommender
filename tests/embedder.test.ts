@@ -17,6 +17,9 @@ describe("Embedder Service", () => {
     await embedPaper(mockPaper, true);
     expect(mockPaper.embedding).toBeDefined();
     expect(Array.isArray(mockPaper.embedding)).toBe(true);
-    expect(mockPaper.embedding.length).toBe(3072);
+    expect(mockPaper.embedding).not.toBeNull();
+    if (mockPaper.embedding) {
+      expect(mockPaper.embedding.length).toBe(3072);
+    }
   });
 });
