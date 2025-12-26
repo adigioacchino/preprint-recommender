@@ -5,6 +5,46 @@
 This project is designed to fetch the latest research papers from preprint servers and process them using Google GenAI embeddings.
 By leveraging vector embeddings, it allows for filtering and identifying daily preprints that are most relevant to a set of "seed papers," helping researchers stay up-to-date with the most pertinent literature.
 
+## Usage of the CLI interface
+
+### Setting up the environment
+
+You need to set up your environment with a Google GenAI API key, which needs to be stored in an environment variable named `GENAI_API_KEY`. For instance, in powershell you can do:
+
+```powershell
+$env:GENAI_API_KEY = "your_google_genai_api_key"
+```
+
+and in bash you can do:
+
+```bash
+export GENAI_API_KEY="your_google_genai_api_key"
+```
+
+Then you need to build the project using npm:
+
+```bash
+npm run build
+```
+
+### Running the CLI interface
+
+The main command is `npx preprint-recommender run`.
+
+You can run it with the following options:
+
+- `-c --categories <categories...>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
+- `-l --look-back <days>`: Number of days to look back for papers (default: 1).
+- `-m --max-results <results>`: Maximum number of papers to fetch (default: 50).
+
+Example:
+
+```bash
+npx preprint-recommender run -c cs.AI cs.LG -l 1 -m 50
+```
+
+This will fetch the latest 50 papers that have been uploaded to the arXiv in the last day, in the categories cs.AI and cs.LG, and embed them using Google GenAI.
+
 ## How to run tests
 
 To run the tests, you need to set up your environment with a Google GenAI API key.
