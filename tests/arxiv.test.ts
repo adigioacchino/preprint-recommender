@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
-  fetchDailyPapers,
-  fetchDailyPapersCategory,
+  fetchRecentPapers,
+  fetchRecentPapersCategory,
 } from "../src/services/arxiv.js";
 
 describe("Arxiv Fetcher", () => {
@@ -11,7 +11,7 @@ describe("Arxiv Fetcher", () => {
     ["cs.CV"], // Computer Vision
   ])("fetch papers from Arxiv [%s]", async (category) => {
     console.log(`Testing category: ${category}`);
-    const papers = await fetchDailyPapersCategory(category, 50, 7);
+    const papers = await fetchRecentPapersCategory(category, 50, 7);
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
@@ -43,7 +43,7 @@ describe("Arxiv Fetcher", () => {
 
   it("fetch papers from Arxiv [multiple categories]", async () => {
     const categories = ["cs.AI", "cs.LG", "cs.CV"];
-    const papers = await fetchDailyPapers(categories, 50, 7, true);
+    const papers = await fetchRecentPapers(categories, 50, 7, true);
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);

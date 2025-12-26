@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { fetchDailyPapers } from "./services/arxiv.js";
+import { fetchRecentPapers } from "./services/arxiv.js";
 import { embedPaper } from "./services/embedder.js";
 
 const program = new Command();
@@ -20,8 +20,10 @@ program
   )
   .action(async (options) => {
     const categories = options.categories;
-    console.log(`Fetching daily papers for categories: ${categories.join(", ")}`);
-    const papers = await fetchDailyPapers(categories);
+    console.log(
+      `Fetching daily papers for categories: ${categories.join(", ")}`
+    );
+    const papers = await fetchRecentPapers(categories);
     console.log(`Fetched ${papers.length} papers.`);
     for (const paper of papers) {
       await embedPaper(paper);
