@@ -2,18 +2,17 @@ import { XMLParser } from "fast-xml-parser";
 import type { PreprintPaper } from "../types.js";
 
 export async function fetchDailyPapersCategory(
-  category: string
+  category: string,
+  maxResults: number = 50,
+  lookBackDays: number = 1
 ): Promise<PreprintPaper[]> {
   console.log(`Fetching papers for category: ${category}...`);
-  // Settings
-  const MAX_RESULTS = 50; // Number of results to fetch per request
-
   // Arxiv API query
   // Sorting rules
   const sortBy = "submittedDate";
   const sortOrder = "descending";
   // Put together the full URL
-  const arxivUrl = `http://export.arxiv.org/api/query?search_query=cat:${category}&start=0&max_results=${MAX_RESULTS}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+  const arxivUrl = `http://export.arxiv.org/api/query?search_query=cat:${category}&start=0&max_results=${maxResults}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
 
   try {
     // Await the HTTP request and response
@@ -53,7 +52,7 @@ export async function fetchDailyPapersCategory(
     }));
 
     // Only keep papers published in the last 24 hours
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const oneDayAgo = new Date(Date.now() - lookBackDays * 24 * 60 * 60 * 1000);
     const recentPapers = cleanPapers.filter(
       (paper) => paper.published > oneDayAgo
     );
@@ -70,22 +69,31 @@ export async function fetchDailyPapersCategory(
 }
 
 export async function fetchDailyPapers(
-  categories: string[]
+  categories: string[],
+  maxResults: number = 50,
+  lookBackDays: number = 1,
+  dropDuplicatePapers: boolean = true
 ): Promise<PreprintPaper[]> {
   let allPapers: PreprintPaper[] = [];
   for (const category of categories) {
-    const papers = await fetchDailyPapersCategory(category);
+    const papers = await fetchDailyPapersCategory(
+      category,
+      maxResults,
+      lookBackDays
+    );
     allPapers = allPapers.concat(papers);
     // Sleep for 3 seconds to avoid hitting rate limits
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 
-  // Remove duplicate papers based on their link
-  const uniquePapersMap: { [link: string]: PreprintPaper } = {};
-  for (const paper of allPapers) {
-    uniquePapersMap[paper.link] = paper;
+  if (dropDuplicatePapers) {
+    // Remove duplicate papers based on their link
+    const uniquePapersMap: { [link: string]: PreprintPaper } = {};
+    for (const paper of allPapers) {
+      uniquePapersMap[paper.link] = paper;
+    }
+    allPapers = Object.values(uniquePapersMap);
   }
-  allPapers = Object.values(uniquePapersMap);
 
   return allPapers;
 }

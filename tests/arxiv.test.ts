@@ -11,12 +11,14 @@ describe("Arxiv Fetcher", () => {
     ["cs.CV"], // Computer Vision
   ])("fetch papers from Arxiv [%s]", async (category) => {
     console.log(`Testing category: ${category}`);
-    const papers = await fetchDailyPapersCategory(category);
+    const papers = await fetchDailyPapersCategory(category, 50, 7);
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
 
     console.log(`Found ${papers.length} papers in ${category}.`);
+
+    expect(papers.length).toBeGreaterThan(0); // Over the last 7 days it's expected to find at least one paper
 
     if (papers.length > 0) {
       console.log(`First paper title in ${category}:`, papers[0].title);
@@ -41,10 +43,12 @@ describe("Arxiv Fetcher", () => {
 
   it("fetch papers from Arxiv [multiple categories]", async () => {
     const categories = ["cs.AI", "cs.LG", "cs.CV"];
-    const papers = await fetchDailyPapers(categories);
+    const papers = await fetchDailyPapers(categories, 50, 7, true);
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
+
+    expect(papers.length).toBeGreaterThan(0); // Over the last 7 days it's expected to find at least one paper
 
     console.log(
       `Found ${papers.length} papers across categories: ${categories.join(
