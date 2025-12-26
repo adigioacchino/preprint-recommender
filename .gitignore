@@ -9,3 +9,6 @@ node_modules/
 
 # Dist folder
 dist/
+
+# Seed papers
+seed_papers/
