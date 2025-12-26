@@ -15,15 +15,31 @@ program
 program
   .command("run")
   .requiredOption(
-    "-C --categories <categories...>",
+    "-c --categories <categories...>",
     "Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG)."
+  )
+  .option(
+    "-l --look-back <days>",
+    "Number of days to look back for papers (default: 1)",
+    "1"
+  )
+  .option(
+    "-m --max-results <results>",
+    "Maximum number of papers to fetch (default: 50)",
+    "50"
   )
   .action(async (options) => {
     const categories = options.categories;
+    const lookBackDays = parseInt(options.lookBack);
+    const maxResults = parseInt(options.maxResults);
     console.log(
       `Fetching daily papers for categories: ${categories.join(", ")}`
     );
-    const papers = await fetchRecentPapers(categories);
+    const papers = await fetchRecentPapers(
+      categories,
+      maxResults,
+      lookBackDays
+    );
     console.log(`Fetched ${papers.length} papers.`);
     for (const paper of papers) {
       await embedPaper(paper);
