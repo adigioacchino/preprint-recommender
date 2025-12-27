@@ -1,5 +1,5 @@
 // arxiv.js
-export { fetchRecentPapers } from "./arxiv.js";
+export { fetchRecentPapersArxiv } from "./arxiv.js";
 
 // embedder.js
 export { embedPaper } from "./embedder.js";

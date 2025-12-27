@@ -1,6 +1,6 @@
 import type { PreprintPaper } from "../types.js";
 
-export async function fetchRecentPapersBiorxivCategory(
+export async function fetchRecentPapersArxivBiorxivCategory(
   category: string,
   daysBack: number = 1
 ): Promise<PreprintPaper[]> {
@@ -59,14 +59,14 @@ export async function fetchRecentPapersBiorxivCategory(
   }
 }
 
-export async function fetchRecentPapersBiorxiv(
+export async function fetchRecentPapersArxivBiorxiv(
   categories: string[],
   daysBack: number = 1
 ): Promise<PreprintPaper[]> {
   let allPapers: PreprintPaper[] = [];
 
   for (const category of categories) {
-    const papers = await fetchRecentPapersBiorxivCategory(category, daysBack);
+    const papers = await fetchRecentPapersArxivBiorxivCategory(category, daysBack);
     allPapers = allPapers.concat(papers);
   }
   return allPapers;

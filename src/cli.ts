@@ -2,7 +2,7 @@
 import { Command } from "commander";
 import cliProgress from 'cli-progress';
 
-import { fetchRecentPapers } from "./services/arxiv.js";
+import { fetchRecentPapersArxiv } from "./services/arxiv.js";
 import { embedPaper } from "./services/embedder.js";
 import { loadSeedPapers } from "./services/load-seed-papers.js";
 import {
@@ -51,7 +51,7 @@ program
     );
 
     // Fetch papers from preprint servers
-    const preprintPapers = await fetchRecentPapers(
+    const preprintPapers = await fetchRecentPapersArxiv(
       categories,
       maxResults,
       lookBackDays

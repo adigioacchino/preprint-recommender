@@ -1,7 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
 import type { PreprintPaper } from "../types.js";
 
-export async function fetchRecentPapersCategory(
+export async function fetchRecentPapersArxivArxivCategory(
   category: string,
   maxResults: number = 500,
   lookBackDays: number = 1
@@ -68,7 +68,7 @@ export async function fetchRecentPapersCategory(
   }
 }
 
-export async function fetchRecentPapers(
+export async function fetchRecentPapersArxiv(
   categories: string[],
   maxResults: number = 500,
   lookBackDays: number = 1,
@@ -76,7 +76,7 @@ export async function fetchRecentPapers(
 ): Promise<PreprintPaper[]> {
   let allPapers: PreprintPaper[] = [];
   for (const category of categories) {
-    const papers = await fetchRecentPapersCategory(
+    const papers = await fetchRecentPapersArxivArxivCategory(
       category,
       maxResults,
       lookBackDays
