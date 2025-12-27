@@ -45,15 +45,17 @@ The main command is `npx preprint-recommender run`.
 
 You can run it with the following options:
 
-- `-c --categories <categories...>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
 - `-s --seed-folder <folder>`: Folder containing seed paper JSON files.
+- `--arxiv-categories <categories>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
+- `--biorxiv-categories <categories>`: Space-separated list of bioRxiv categories to fetch papers from (e.g., bioinformatics genomics).
 - `-l --look-back <days>`: Number of days to look back for papers (default: 1).
 - `-m --max-results <results>`: Maximum number of papers to fetch (default: 50).
 
+One between `--arxiv-categories` and `--biorxiv-categories` must be provided.
 Example:
 
 ```bash
-npx preprint-recommender run -c cs.AI cs.LG -s <seed-folder>
+npx preprint-recommender run -s .\seed_papers\ --arxiv-categories cs.AI --biorxiv-categories bioinformatics
 ```
 
 This will fetch the latest 50 papers that have been uploaded to the arXiv in the last day, in the categories cs.AI and cs.LG, and embed them using Google GenAI.
