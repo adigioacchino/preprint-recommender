@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
-  fetchRecentPapersArxivBiorxiv,
-  fetchRecentPapersArxivBiorxivCategory,
+  fetchRecentPapersBiorxiv,
+  fetchRecentPapersBiorxivCategory,
 } from "../src/services/biorxiv.js";
 
 describe("Biorxiv Fetcher", () => {
@@ -10,7 +10,7 @@ describe("Biorxiv Fetcher", () => {
     ["microbiology"],
   ])("fetch papers from bioRxiv [%s]", async (category) => {
     console.log(`Testing category: ${category}`);
-    const papers = await fetchRecentPapersArxivBiorxivCategory(category, 7);
+    const papers = await fetchRecentPapersBiorxivCategory(category, 7);
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
@@ -41,7 +41,7 @@ describe("Biorxiv Fetcher", () => {
 
   it("fetch papers from bioRxiv [multiple categories]", async () => {
     const categories = ["bioinformatics", "microbiology"];
-    const papers = await fetchRecentPapersArxivBiorxiv(categories, 7);
+    const papers = await fetchRecentPapersBiorxiv(categories, 7);
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
