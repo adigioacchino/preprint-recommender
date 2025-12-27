@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
+import cliProgress from 'cli-progress';
 
 import { fetchRecentPapers } from "./services/arxiv.js";
 import { embedPaper } from "./services/embedder.js";
@@ -65,17 +66,23 @@ program
     // Embed papers
     // Preprints first
     console.log("Embedding preprints...");
-    for (const paper of preprintPapers) {
+    const preprintBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    preprintBar.start(preprintPapers.length, 0);
+    for (const [index, paper] of preprintPapers.entries()) {
       await embedPaper(paper);
-      console.log(`Embedded paper: ${paper.title}`);
+      preprintBar.update(index + 1);
     }
+    preprintBar.stop();
     console.log("Preprints embedded.");
     // Seed papers second
     console.log("Embedding seed papers...");
-    for (const paper of seedPapers) {
+    const seedBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    seedBar.start(seedPapers.length, 0);
+    for (const [index, paper] of seedPapers.entries()) {
+      seedBar.update(index + 1);
       await embedPaper(paper);
-      console.log(`Embedded paper: ${paper.title}`);
     }
+    seedBar.stop();
     console.log("Seed papers embedded.");
     console.log("All papers have been embedded.");
 
