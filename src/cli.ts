@@ -9,6 +9,7 @@ import {
   getClosestSeed,
   getSimilarityThreshold,
 } from "./services/similarity.js";
+import type { MatchingPaper } from "./types.js";
 
 const program = new Command();
 
@@ -94,20 +95,51 @@ program
 
     // Find and display closest seed paper for each preprint
     console.log("Finding closest seed papers for each preprint...");
+    const matchingPapers: MatchingPaper[] = [];
     for (const preprint of preprintPapers) {
       const result = getClosestSeed(preprint, seedPapers);
       if (result && result.similarity >= similarityThreshold) {
         // Get a 0-100 scale for similarity
         const similarityPercent =
-          ((1 - result.similarity) / (1 - similarityThreshold)) * 100;
+          ((result.similarity - similarityThreshold) / (1 - similarityThreshold)) * 100;
+        
+        // Store the matching paper
+        matchingPapers.push({
+          ...preprint,
+          closestSeed: result.closestSeed,
+          rawSimilarity: result.similarity,
+          rescaledSimilarity: similarityPercent,
+        });
+      }
+    }
+
+    // Print results: matching papers grouped by closest seed paper
+    // and sorted by rescaled similarity
+    console.log("Matching papers:");
+
+    // Group papers by seed title
+    const papersBySeed: Record<string, MatchingPaper[]> = {};
+    for (const paper of matchingPapers) {
+      const seedTitle = paper.closestSeed.title;
+      if (!papersBySeed[seedTitle]) {
+        papersBySeed[seedTitle] = [];
+      }
+      papersBySeed[seedTitle].push(paper);
+    }
+
+    // Print grouped results
+    for (const [seedTitle, papers] of Object.entries(papersBySeed)) {
+      console.log(`\nSeed Paper: "${seedTitle}"`);
+      // Sort papers by rescaled similarity descending
+      papers.sort((a, b) => b.rescaledSimilarity - a.rescaledSimilarity);
+      for (const paper of papers) {
         console.log(
-          `Preprint: "${preprint.title}" is similar to Seed: "${
-            result.closestSeed.title
-          }" with similarity score (0-100) ${similarityPercent.toFixed(
+          `  Preprint: "${paper.title}" - Similarity (0-100%): ${paper.rescaledSimilarity.toFixed(
             2
-          )}%. Link: ${preprint.link}`
+          )}%. Link: ${paper.link}`
         );
       }
+      console.log("\n");
     }
   });
 

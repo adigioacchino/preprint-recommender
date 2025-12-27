@@ -12,3 +12,9 @@ export interface SeedPaper {
   abstract: string;
   embedding: number[] | null;
 }
+
+export interface MatchingPaper extends PreprintPaper {
+  closestSeed: SeedPaper;
+  rawSimilarity: number;
+  rescaledSimilarity: number;
+}
