@@ -30,8 +30,8 @@ program
   )
   .option(
     "-m --max-results <results>",
-    "Maximum number of papers to fetch (default: 50).",
-    "50"
+    "Maximum number of papers to fetch (default: 500).",
+    "500"
   )
   .action(async (options) => {
     // Parsed options

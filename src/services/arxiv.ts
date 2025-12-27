@@ -3,7 +3,7 @@ import type { PreprintPaper } from "../types.js";
 
 export async function fetchRecentPapersCategory(
   category: string,
-  maxResults: number = 50,
+  maxResults: number = 500,
   lookBackDays: number = 1
 ): Promise<PreprintPaper[]> {
   console.log(`Fetching papers for category: ${category}...`);
@@ -70,7 +70,7 @@ export async function fetchRecentPapersCategory(
 
 export async function fetchRecentPapers(
   categories: string[],
-  maxResults: number = 50,
+  maxResults: number = 500,
   lookBackDays: number = 1,
   dropDuplicatePapers: boolean = true
 ): Promise<PreprintPaper[]> {
