@@ -1,5 +1,5 @@
 // Types
-export type { PreprintPaper } from './types.js';
+export type { PreprintPaper, SeedPaper } from "./types.js";
 
 // Services - see src/services/index.ts
-export * from './services';
+export * from "./services";
