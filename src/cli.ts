@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import cliProgress from 'cli-progress';
+import cliProgress from "cli-progress";
 
 import { fetchRecentPapersArxiv } from "./services/arxiv.js";
+import { fetchRecentPapersBiorxiv } from "./services/biorxiv.js";
 import { embedPaper } from "./services/embedder.js";
 import { loadSeedPapers } from "./services/load-seed-papers.js";
 import {
@@ -23,12 +24,16 @@ program
 program
   .command("run")
   .requiredOption(
-    "-c --categories <categories...>",
-    "Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG)."
-  )
-  .requiredOption(
     "-s --seed-folder <folder>",
     "Folder containing seed papers of interest."
+  )
+  .option(
+    "--arxiv-categories <categories...>",
+    "Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG)."
+  )
+  .option(
+    "--biorxiv-categories <categories...>",
+    "Space-separated list of bioRxiv categories to fetch papers from (e.g., bioinformatics microbiology)."
   )
   .option(
     "-l --look-back <days>",
@@ -37,24 +42,37 @@ program
   )
   .option(
     "-m --max-results <results>",
-    "Maximum number of papers to fetch (default: 500).",
+    "Maximum number of papers to fetch from arxiv (default: 500).",
     "500"
   )
   .action(async (options) => {
     // Parsed options
-    const categories = options.categories;
+    const arxivCategories = options.arxivCategories;
+    const biorxivCategories = options.biorxivCategories;
     const seedFolder = options.seedFolder;
     const lookBackDays = parseInt(options.lookBack);
     const maxResults = parseInt(options.maxResults);
-    console.log(
-      `Fetching daily papers for categories: ${categories.join(", ")}`
-    );
 
     // Fetch papers from preprint servers
+    // One between arxivCategories and biorxivCategories must be provided
+    if (
+      (!arxivCategories || arxivCategories.length === 0) &&
+      (!biorxivCategories || biorxivCategories.length === 0)
+    ) {
+      console.error(
+        "Error: At least one of --arxiv-categories or --biorxiv-categories must be provided."
+      );
+      process.exit(1);
+    }
+    // Arxiv
     const preprintPapers = await fetchRecentPapersArxiv(
-      categories,
+      arxivCategories,
       maxResults,
       lookBackDays
+    );
+    // Biorxiv
+    preprintPapers.push(
+      ...(await fetchRecentPapersBiorxiv(biorxivCategories, lookBackDays))
     );
     console.log(
       `Fetched ${preprintPapers.length} papers from preprint servers.`
@@ -67,7 +85,10 @@ program
     // Embed papers
     // Preprints first
     console.log("Embedding preprints...");
-    const preprintBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    const preprintBar = new cliProgress.SingleBar(
+      {},
+      cliProgress.Presets.shades_classic
+    );
     preprintBar.start(preprintPapers.length, 0);
     for (const [index, paper] of preprintPapers.entries()) {
       await embedPaper(paper);
@@ -77,7 +98,10 @@ program
     console.log("Preprints embedded.");
     // Seed papers second
     console.log("Embedding seed papers...");
-    const seedBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    const seedBar = new cliProgress.SingleBar(
+      {},
+      cliProgress.Presets.shades_classic
+    );
     seedBar.start(seedPapers.length, 0);
     for (const [index, paper] of seedPapers.entries()) {
       seedBar.update(index + 1);
@@ -101,8 +125,10 @@ program
       if (result && result.similarity >= similarityThreshold) {
         // Get a 0-100 scale for similarity
         const similarityPercent =
-          ((result.similarity - similarityThreshold) / (1 - similarityThreshold)) * 100;
-        
+          ((result.similarity - similarityThreshold) /
+            (1 - similarityThreshold)) *
+          100;
+
         // Store the matching paper
         matchingPapers.push({
           ...preprint,
@@ -134,7 +160,9 @@ program
       papers.sort((a, b) => b.rescaledSimilarity - a.rescaledSimilarity);
       for (const paper of papers) {
         console.log(
-          `  Preprint: "${paper.title}" - Similarity (0-100%): ${paper.rescaledSimilarity.toFixed(
+          `  Preprint: "${
+            paper.title
+          }" - Similarity (0-100%): ${paper.rescaledSimilarity.toFixed(
             2
           )}%. Link: ${paper.link}`
         );
