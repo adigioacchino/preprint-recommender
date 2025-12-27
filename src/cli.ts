@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 import { Command } from "commander";
+
 import { fetchRecentPapers } from "./services/arxiv.js";
 import { embedPaper } from "./services/embedder.js";
 import { loadSeedPapers } from "./services/load-seed-papers.js";
+import {
+  getClosestSeed,
+  getSimilarityThreshold,
+} from "./services/similarity.js";
 
 const program = new Command();
 
@@ -73,6 +78,30 @@ program
     }
     console.log("Seed papers embedded.");
     console.log("All papers have been embedded.");
+
+    // Get thresholds for seed papers
+    const similarityThreshold = getSimilarityThreshold(seedPapers);
+    console.log(
+      `Computed similarity threshold: ${similarityThreshold.toFixed(4)}`
+    );
+
+    // Find and display closest seed paper for each preprint
+    console.log("Finding closest seed papers for each preprint...");
+    for (const preprint of preprintPapers) {
+      const result = getClosestSeed(preprint, seedPapers);
+      if (result && result.similarity >= similarityThreshold) {
+        // Get a 0-100 scale for similarity
+        const similarityPercent =
+          ((1 - result.similarity) / (1 - similarityThreshold)) * 100;
+        console.log(
+          `Preprint: "${preprint.title}" is similar to Seed: "${
+            result.closestSeed.title
+          }" with similarity score (0-100) ${similarityPercent.toFixed(
+            2
+          )}%. Link: ${preprint.link}`
+        );
+      }
+    }
   });
 
 program.parse();
