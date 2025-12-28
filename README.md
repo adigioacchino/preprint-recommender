@@ -5,6 +5,57 @@
 This project is designed to fetch the latest research papers from preprint servers and process them using Google GenAI embeddings.
 By leveraging vector embeddings, it allows for filtering and identifying daily preprints that are most relevant to a set of "seed papers," helping researchers stay up-to-date with the most pertinent literature.
 
+## How to set up daily recommendations via GitHub Actions
+
+You can set up daily recommendations using GitHub Actions.
+This requires several conditions to be met:
+
+- You need to have a Google GenAI API key, which you can obtain from free from [Google AI Studio](https://aistudio.google.com/). This key comes with 1000 free embedding requests per day, which should be sufficient for processing daily preprints across various categories.
+- You need to have enough GitHub Actions minutes available in your account. Free accounts have 2000 minutes per month, which should be sufficient for running the daily workflow.
+
+To set up the GitHub Actions workflow, follow the steps below.
+
+### Repository setup
+
+1. Fork this repository to your own GitHub account.
+2. Go to the "Settings" tab of your forked repository.
+3. Select "Secrets and variables" > "Actions".
+4. Click on "New repository secret".
+5. Add a new secret with the name `GENAI_API_KEY` and set its value to your Google GenAI API key.
+
+### Seed papers setup
+
+1. Create a folder named `seed_papers` in the root of your forked repository.
+2. Add JSON files representing your seed papers in this folder. Each JSON file should have the following structure:
+
+```json
+{
+  "title": "Title of the seed paper",
+  "abstract": "Abstract of the seed paper"
+}
+```
+
+We recommend starting with 5 to 10 seed papers that are closely related to your research interests.
+Adding too few seed papers may result in less relevant recommendations, while adding too many results in higher number of suggestions, which reduces the interest of the daily recommendations.
+
+### Configuration setup
+
+As a last step, we need to configure `preprint-recommender` to decide which preprint servers we are interested in, and which categories to monitor.
+
+To do that, you need to create a configuration file named `preprint-recommender-config.json` in the root of your forked repository.
+This file should have the following structure:
+
+```json
+{
+  "seedFolder": "./seed_papers",
+  "arxivCategories": ["cs.AI", "cs.LG"],
+  "biorxivCategories": ["bioinformatics", "genomics"],
+}
+```
+
+You can customize the `arxivCategories` and `biorxivCategories` fields to match your research interests.
+By removing one of the two fields, you can choose to monitor only one preprint server.
+
 ## Usage of the CLI interface
 
 ### Setting up the environment
