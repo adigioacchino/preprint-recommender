@@ -37,6 +37,6 @@ jobs:
       - name: Run preprint-recommender
         run: |
           cd caller-repo
-          npx ../preprint-recommender/preprint-recommender run -c preprint-recommender-config.json
+          npx ../preprint-recommender run -c preprint-recommender-config.json
         env:
           GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
