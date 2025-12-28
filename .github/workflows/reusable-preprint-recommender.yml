@@ -1,0 +1,26 @@
+name: Reusable Preprint Recommender Workflow
+
+on:
+  workflow_call:
+    secrets:
+      GENAI_API_KEY:
+        description: "API key for Google Generative AI"
+        required: true
+
+jobs:
+  run-logic:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Run preprint-recommender
+        run: npx preprint-recommender run -c preprint-recommender-config.json
+        env:
+          GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
