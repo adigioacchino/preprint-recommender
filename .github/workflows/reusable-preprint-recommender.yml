@@ -12,15 +12,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout the caller repository (User's config and seed papers)
         uses: actions/checkout@v6
+        with:
+          path: caller-repo
+
+      - name: Checkout preprint-recommender repository
+        uses: actions/checkout@v6
+        with:
+          repository: adigioacchino/preprint-recommender
+          path: preprint-recommender
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24"
 
+      - name: Install dependencies and build
+        run: |
+          cd preprint-recommender
+          npm install
+          npm run build
+
       - name: Run preprint-recommender
-        run: npx preprint-recommender run -c preprint-recommender-config.json
+        run: |
+          cd caller-repo
+          npx ../preprint-recommender/preprint-recommender run -c preprint-recommender-config.json
         env:
           GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
