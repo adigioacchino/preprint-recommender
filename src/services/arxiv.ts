@@ -13,7 +13,7 @@ export async function fetchRecentPapersArxivArxivCategory(
   maxResults: number = 500,
   lookBackDays: number = 1
 ): Promise<PreprintPaper[]> {
-  console.log(`Fetching papers for category: ${category}...`);
+  console.log(`Fetching papers uploaded to Arxiv in the last ${lookBackDays} days for category: ${category}...`);
   // Arxiv API query
   // Sorting rules
   const sortBy = "submittedDate";
@@ -109,5 +109,6 @@ export async function fetchRecentPapersArxiv(
     allPapers = Object.values(uniquePapersMap);
   }
 
+  console.log(`Total unique papers fetched from Arxiv: ${allPapers.length}`);
   return allPapers;
 }

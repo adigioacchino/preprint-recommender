@@ -10,7 +10,7 @@ export async function fetchRecentPapersBiorxivCategory(
   category: string,
   daysBack: number = 1
 ): Promise<PreprintPaper[]> {
-  console.log(`Fetching bioRxiv papers from the last ${daysBack} days...`);
+  console.log(`Fetching papers uploaded to bioRxiv in the last ${daysBack} days for category: ${category}...`);
 
   // Today as YYYY-MM-DD and calculate the date 'daysBack' days ago
   const today = new Date().toISOString().split("T")[0];
@@ -28,7 +28,6 @@ export async function fetchRecentPapersBiorxivCategory(
     const data = await response.json();
 
     const totalResults = data.messages[0].total;
-    console.log(`Total bioRxiv papers found: ${totalResults}`);
 
     let fetchedPapers: PreprintPaper[] = data.collection.map((item) => ({
       title: item.title,
@@ -54,7 +53,7 @@ export async function fetchRecentPapersBiorxivCategory(
       }));
       fetchedPapers = fetchedPapers.concat(pagedPapers);
     }
-    console.log(`Fetched ${fetchedPapers.length} bioRxiv papers.`);
+    console.log(`Fetched ${fetchedPapers.length} papers from bioRxiv for category: ${category}`);
 
     return fetchedPapers;
   } catch (error) {
@@ -79,5 +78,7 @@ export async function fetchRecentPapersBiorxiv(
     const papers = await fetchRecentPapersBiorxivCategory(category, daysBack);
     allPapers = allPapers.concat(papers);
   }
+
+  console.log(`Total papers fetched from bioRxiv: ${allPapers.length}`);
   return allPapers;
 }
