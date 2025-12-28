@@ -1,0 +1,38 @@
+name: Scheduled Preprint Recommender
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # Runs daily at 3 am UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Check for GENAI_API_KEY
+        id: check-key
+        run: |
+          if [ -z "${{ vars.GENAI_API_KEY }}" ]; then
+            echo "::warning::GENAI_API_KEY variable is not defined. Skipping execution."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout repository
+        if: steps.check-key.outputs.skip != 'true'
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        if: steps.check-key.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Run preprint-recommender
+        if: steps.check-key.outputs.skip != 'true'
+        run: npx preprint-recommender run -c preprint-recommender-config.json
+        env:
+          GENAI_API_KEY: ${{ vars.GENAI_API_KEY }}
