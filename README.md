@@ -39,12 +39,30 @@ Each JSON file should have the following structure:
 }
 ```
 
+### Config file (optional)
+
+You can create a configuration file named `preprint-recommender-config.json` in the root of your project to store default options.
+This file should have the following structure (all fields are optional):
+
+```json
+{
+  "seedFolder": "./seed_papers",
+  "arxivCategories": ["cs.AI", "cs.LG"],
+  "biorxivCategories": ["bioinformatics", "genomics"],
+  "lookBack": "1",
+  "maxResults": "50"
+}
+```
+
+Any value provided via the CLI interface will override the corresponding value in the config file.
+
 ### Running the CLI interface
 
 The main command is `npx preprint-recommender run`.
 
 You can run it with the following options:
 
+- `-c --config <path>`: Path to the configuration file (default: `preprint-recommender-config.json` in the current working directory).
 - `-s --seed-folder <folder>`: Folder containing seed paper JSON files.
 - `--arxiv-categories <categories>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
 - `--biorxiv-categories <categories>`: Space-separated list of bioRxiv categories to fetch papers from (e.g., bioinformatics genomics).
