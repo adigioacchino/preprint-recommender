@@ -4,6 +4,7 @@ import cliProgress from "cli-progress";
 
 import { fetchRecentPapersArxiv } from "./services/arxiv.js";
 import { fetchRecentPapersBiorxiv } from "./services/biorxiv.js";
+import { getConfig } from "./services/config-loader.js";
 import { embedPaper } from "./services/embedder.js";
 import { loadSeedPapers } from "./services/load-seed-papers.js";
 import {
@@ -23,7 +24,11 @@ program
 
 program
   .command("run")
-  .requiredOption(
+  .option(
+    "-c --config <path>",
+    "Path to a JSON config file. Defaults to preprint-recommender-config.json in cwd."
+  )
+  .option(
     "-s --seed-folder <folder>",
     "Folder containing seed papers of interest."
   )
@@ -37,21 +42,30 @@ program
   )
   .option(
     "-l --look-back <days>",
-    "Number of days to look back for papers (default: 1).",
-    "1"
+    "Number of days to look back for papers (default: 1)."
   )
   .option(
     "-m --max-results <results>",
-    "Maximum number of papers to fetch from arxiv (default: 500).",
-    "500"
+    "Maximum number of papers to fetch from arxiv (default: 500)."
   )
   .action(async (options) => {
-    // Parsed options
-    const arxivCategories = options.arxivCategories;
-    const biorxivCategories = options.biorxivCategories;
-    const seedFolder = options.seedFolder;
-    const lookBackDays = parseInt(options.lookBack);
-    const maxResults = parseInt(options.maxResults);
+    // Load config from file and merge with CLI options
+    const config = getConfig(options);
+
+    // Parsed options with defaults
+    const arxivCategories = config.arxivCategories;
+    const biorxivCategories = config.biorxivCategories;
+    const seedFolder = config.seedFolder;
+    const lookBackDays = parseInt(config.lookBack ?? "1");
+    const maxResults = parseInt(config.maxResults ?? "500");
+
+    // Validate required options
+    if (!seedFolder) {
+      console.error(
+        "Error: --seed-folder is required (via CLI or config file)."
+      );
+      process.exit(1);
+    }
 
     // Fetch papers from preprint servers
     // One between arxivCategories and biorxivCategories must be provided

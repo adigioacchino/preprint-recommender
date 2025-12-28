@@ -12,3 +12,6 @@ dist/
 
 # Seed papers
 seed_papers/
+
+# Config file
+preprint-recommender-config.json

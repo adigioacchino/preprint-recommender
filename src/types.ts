@@ -18,3 +18,14 @@ export interface MatchingPaper extends PreprintPaper {
   rawSimilarity: number;
   rescaledSimilarity: number;
 }
+
+/**
+ * Configuration options for the preprint-recommender CLI.
+ */
+export interface ConfigOptions {
+  seedFolder?: string;
+  arxivCategories?: string[];
+  biorxivCategories?: string[];
+  lookBack?: string;
+  maxResults?: string;
+}
