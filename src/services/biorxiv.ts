@@ -1,5 +1,11 @@
 import type { PreprintPaper } from "../types.js";
 
+/**
+ * Fetches recent papers from a single bioRxiv category.
+ * @param category - The bioRxiv category to fetch papers from (e.g., "bioinformatics").
+ * @param daysBack - Number of days to look back for recent papers (default: 1).
+ * @returns Array of preprint papers from the specified category.
+ */
 export async function fetchRecentPapersBiorxivCategory(
   category: string,
   daysBack: number = 1
@@ -57,6 +63,12 @@ export async function fetchRecentPapersBiorxivCategory(
   }
 }
 
+/**
+ * Fetches recent papers from multiple bioRxiv categories.
+ * @param categories - Array of bioRxiv categories to fetch papers from.
+ * @param daysBack - Number of days to look back for recent papers (default: 1).
+ * @returns Array of preprint papers from all specified categories.
+ */
 export async function fetchRecentPapersBiorxiv(
   categories: string[],
   daysBack: number = 1

@@ -1,6 +1,13 @@
 import { XMLParser } from "fast-xml-parser";
 import type { PreprintPaper } from "../types.js";
 
+/**
+ * Fetches recent papers from a single arXiv category.
+ * @param category - The arXiv category to fetch papers from (e.g., "cs.AI").
+ * @param maxResults - Maximum number of papers to fetch (default: 500).
+ * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @returns Array of preprint papers from the specified category.
+ */
 export async function fetchRecentPapersArxivArxivCategory(
   category: string,
   maxResults: number = 500,
@@ -67,6 +74,14 @@ export async function fetchRecentPapersArxivArxivCategory(
   }
 }
 
+/**
+ * Fetches recent papers from multiple arXiv categories.
+ * @param categories - Array of arXiv categories to fetch papers from.
+ * @param maxResults - Maximum number of papers to fetch per category (default: 500).
+ * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @param dropDuplicatePapers - Whether to remove duplicate papers across categories (default: true).
+ * @returns Array of unique preprint papers from all specified categories.
+ */
 export async function fetchRecentPapersArxiv(
   categories: string[],
   maxResults: number = 500,

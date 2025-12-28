@@ -1,6 +1,12 @@
 import { cosineSimilarity } from "fast-cosine-similarity";
 import type { PreprintPaper, SeedPaper } from "../types";
 
+/**
+ * Finds the seed paper most similar to a given preprint.
+ * @param preprint - The preprint paper to find a match for.
+ * @param seedPapers - Array of seed papers to compare against.
+ * @returns The closest seed paper and similarity score, or null if no match found.
+ */
 export function getClosestSeed(
   preprint: PreprintPaper,
   seedPapers: SeedPaper[]
@@ -39,10 +45,14 @@ export function getClosestSeed(
   }
 }
 
+/**
+ * Computes a similarity threshold based on pairwise similarities between seed papers.
+ * Uses the 90th percentile of pairwise similarities as the threshold.
+ * @param seedPapers - Array of seed papers with embeddings.
+ * @returns The computed similarity threshold.
+ * @throws Error if fewer than two seed papers have embeddings.
+ */
 export function getSimilarityThreshold(seedPapers: SeedPaper[]): number {
-  // Define a similarity threshold based on seed papers
-  // Use a simple heuristic: take the 90% percentile of pairwise similarities
-
   // Collect all pairwise similarities
   const similarities: number[] = [];
   for (let i = 0; i < seedPapers.length; i++) {

@@ -1,12 +1,22 @@
 import { GoogleGenAI } from "@google/genai";
 import type { PreprintPaper, SeedPaper } from "../types.js";
 
-const RATE_LIMIT_WAIT_MS = 60_000; // 1 minute cooldown for rate limits
+/** Wait time in milliseconds when rate limited (1 minute). */
+const RATE_LIMIT_WAIT_MS = 60_000;
 
+/**
+ * Sleeps for the specified number of milliseconds.
+ * @param ms - Duration to sleep in milliseconds.
+ */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Checks if an error is a rate limit error from the API.
+ * @param error - The error to check.
+ * @returns True if the error indicates rate limiting.
+ */
 function isRateLimitError(error: unknown): boolean {
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
@@ -20,6 +30,14 @@ function isRateLimitError(error: unknown): boolean {
   return false;
 }
 
+/**
+ * Generates an embedding for a paper using Google GenAI and stores it on the paper object.
+ * Uses the paper's title and abstract to create the embedding.
+ * Automatically retries on rate limit errors with exponential backoff.
+ * @param paper - The paper to generate an embedding for (modified in place).
+ * @param verbose - Whether to log progress messages (default: false).
+ * @throws Error if GENAI_API_KEY is not set or if embedding fails after retries.
+ */
 export async function embedPaper(
   paper: PreprintPaper | SeedPaper,
   verbose: boolean = false
