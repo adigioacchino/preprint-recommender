@@ -30,12 +30,10 @@ describe("loadSeedPapers", () => {
       {
         title: "Machine Learning in Healthcare",
         abstract: "Applications of ML in medical diagnosis.",
-        embedding: null,
       },
       {
         title: "Climate Change Modeling",
         abstract: "New approaches to climate prediction models.",
-        // No embedding field - should default to null
       },
     ];
 
@@ -53,11 +51,15 @@ describe("loadSeedPapers", () => {
     expect(result[0]).toHaveProperty("abstract");
     expect(result[0]).toHaveProperty("embedding");
 
-    // Check that paper without embedding gets null
+    // Check that paper without embedding gets undefined embedding
+    const mlPaper = result.find(
+      (p) => p.title === "Machine Learning in Healthcare"
+    );
+    expect(mlPaper?.embedding).toBeUndefined();
     const climateChangePaper = result.find(
       (p) => p.title === "Climate Change Modeling"
     );
-    expect(climateChangePaper?.embedding).toBeNull();
+    expect(climateChangePaper?.embedding).toBeUndefined();
   });
 
   it("should skip papers missing required fields", async () => {

@@ -4,13 +4,13 @@ export interface PreprintPaper {
   authors: string[];
   published: Date;
   link: string;
-  embedding: number[] | null;
+  embedding?: number[];
 }
 
 export interface SeedPaper {
   title: string;
   abstract: string;
-  embedding: number[] | null;
+  embedding?: number[];
 }
 
 export interface MatchingPaper extends PreprintPaper {

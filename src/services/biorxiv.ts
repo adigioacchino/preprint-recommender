@@ -30,7 +30,6 @@ export async function fetchRecentPapersBiorxivCategory(
       authors: item.authors.split("; ").map((author: string) => author.trim()),
       published: new Date(item.date),
       link: `https://www.biorxiv.org/content/${item.doi}v${item.version}`,
-      embedding: null,
     }));
 
     // Deal with pagination if needed: bioRxiv returns max 100 results per page
@@ -46,7 +45,6 @@ export async function fetchRecentPapersBiorxivCategory(
           .map((author: string) => author.trim()),
         published: new Date(item.date),
         link: `https://www.biorxiv.org/content/${item.doi}v${item.version}`,
-        embedding: null,
       }));
       fetchedPapers = fetchedPapers.concat(pagedPapers);
     }

@@ -72,7 +72,6 @@ describe("getClosestSeed", () => {
       authors: ["Author 1"],
       published: new Date(),
       link: "https://example.com",
-      embedding: null,
     };
 
     const result = getClosestSeed(preprint, mockSeedPapers);
@@ -91,8 +90,8 @@ describe("getClosestSeed", () => {
     };
 
     const seedsWithoutEmbeddings: SeedPaper[] = [
-      { title: "Seed 1", abstract: "Abstract 1", embedding: null },
-      { title: "Seed 2", abstract: "Abstract 2", embedding: null },
+      { title: "Seed 1", abstract: "Abstract 1" },
+      { title: "Seed 2", abstract: "Abstract 2" },
     ];
 
     const result = getClosestSeed(preprint, seedsWithoutEmbeddings);
@@ -111,7 +110,7 @@ describe("getClosestSeed", () => {
     };
 
     const mixedSeeds: SeedPaper[] = [
-      { title: "Seed No Emb", abstract: "No embedding", embedding: null },
+      { title: "Seed No Emb", abstract: "No embedding" },
       ...mockSeedPapers,
     ];
 
@@ -159,8 +158,8 @@ describe("getSimilarityThreshold", () => {
 
   it("should throw error when no seed papers have embeddings", () => {
     const seedPapers: SeedPaper[] = [
-      { title: "Seed 1", abstract: "Abstract", embedding: null },
-      { title: "Seed 2", abstract: "Abstract", embedding: null },
+      { title: "Seed 1", abstract: "Abstract" },
+      { title: "Seed 2", abstract: "Abstract" },
     ];
 
     expect(() => getSimilarityThreshold(seedPapers)).toThrow(
@@ -175,7 +174,7 @@ describe("getSimilarityThreshold", () => {
         abstract: "Abstract",
         embedding: createMockEmbedding([1, 0, 0]),
       },
-      { title: "Seed 2", abstract: "Abstract", embedding: null },
+      { title: "Seed 2", abstract: "Abstract" },
     ];
 
     expect(() => getSimilarityThreshold(seedPapers)).toThrow(

@@ -16,7 +16,7 @@ export async function loadSeedPapers(seedFolder: string): Promise<SeedPaper[]> {
         return {
           title: paper.title,
           abstract: paper.abstract,
-          embedding: paper.embedding || null,
+          embedding: paper.embedding,
         } as SeedPaper;
       } else {
         console.warn(

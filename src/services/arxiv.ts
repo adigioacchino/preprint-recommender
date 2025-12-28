@@ -48,7 +48,6 @@ export async function fetchRecentPapersArxivArxivCategory(
       // Convert published string to Date object
       published: new Date(entry.published),
       link: entry.id,
-      embedding: null,
     }));
 
     // Only keep papers published in the last 24 hours

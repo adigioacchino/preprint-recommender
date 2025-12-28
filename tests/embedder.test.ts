@@ -31,14 +31,10 @@ describe("Embedder Service", () => {
       authors: ["Alice Smith", "Bob Johnson"],
       published: new Date(),
       link: "http://arxiv.org/abs/1234.5678v1",
-      embedding: null,
     };
     await embedderModule.embedPaper(mockPaper, true);
     expect(mockPaper.embedding).toBeDefined();
     expect(Array.isArray(mockPaper.embedding)).toBe(true);
-    expect(mockPaper.embedding).not.toBeNull();
-    if (mockPaper.embedding) {
-      expect(mockPaper.embedding.length).toBe(3072);
-    }
+    expect(mockPaper.embedding?.length).toBe(3072);
   });
 });

@@ -30,8 +30,7 @@ describe("Arxiv Fetcher", () => {
         expect(paper).toHaveProperty("authors");
         expect(paper).toHaveProperty("published");
         expect(paper).toHaveProperty("link");
-        expect(paper).toHaveProperty("embedding");
-        expect(paper.embedding).toBeNull();
+        expect(paper.embedding).toBeUndefined();
         expect(Array.isArray(paper.authors)).toBe(true);
         expect(paper.published instanceof Date).toBe(true);
       }
