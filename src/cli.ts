@@ -206,19 +206,19 @@ program
 
       // Print grouped results
       for (const [seedTitle, papers] of Object.entries(papersBySeed)) {
-        console.log(`### Seed Paper: "${seedTitle}"`);
+        console.log(`### Seed: "${seedTitle}"`);
         // Sort papers by rescaled similarity descending
         papers.sort((a, b) => b.rescaledSimilarity - a.rescaledSimilarity);
         for (const paper of papers) {
           console.log(
-            `  Preprint: "${
+            `- "${
               paper.title
-            }" - Similarity above threshold (0-100%): ${paper.rescaledSimilarity.toFixed(
+            }" | similarity above threshold (0-100%): **${paper.rescaledSimilarity.toFixed(
               2
-            )}%. Link: ${paper.link}`
+            )}%** | (link)[${paper.link}]`
           );
+          console.log("\n");
         }
-        console.log("\n");
       }
     }
   });
