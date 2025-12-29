@@ -50,8 +50,11 @@ export function mergeConfig(
   if (cliOptions.biorxivCategories !== undefined) {
     merged.biorxivCategories = cliOptions.biorxivCategories as string[];
   }
-  if (cliOptions.lookBack !== undefined) {
-    merged.lookBack = cliOptions.lookBack as string;
+  if (cliOptions.lookBackDays !== undefined) {
+    merged.lookBackDays = cliOptions.lookBackDays as string;
+  }
+  if (cliOptions.offsetDays !== undefined) {
+    merged.offsetDays = cliOptions.offsetDays as string;
   }
   if (cliOptions.maxResults !== undefined) {
     merged.maxResults = cliOptions.maxResults as string;

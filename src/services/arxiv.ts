@@ -4,20 +4,23 @@ import type { PreprintPaper } from "../types.js";
 /**
  * Fetches recent papers from a single arXiv category.
  * @param category - The arXiv category to fetch papers from (e.g., "cs.AI").
- * @param maxResults - Maximum number of papers to fetch (default: 500).
+ * @param maxResults - Maximum number of papers to fetch (default: 2000).
  * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @param offsetDays - Number of days to offset the look back period (default: 7).
  * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of preprint papers from the specified category.
  */
 export async function fetchRecentPapersArxivArxivCategory(
   category: string,
-  maxResults: number = 500,
+  maxResults: number = 2_000,
   lookBackDays: number = 1,
+  offsetDays: number = 7,
   verbose: boolean = false
 ): Promise<PreprintPaper[]> {
   if (verbose) {
     console.log(
-      `Fetching papers uploaded to Arxiv in the last ${lookBackDays} days for category: ${category}...`
+      `Fetching papers uploaded to Arxiv in the last ${lookBackDays} days ` +
+        `with an offset of ${offsetDays} days for category: ${category}...`
     );
   }
   // Arxiv API query
@@ -25,7 +28,9 @@ export async function fetchRecentPapersArxivArxivCategory(
   const sortBy = "submittedDate";
   const sortOrder = "descending";
   // Put together the full URL
-  const arxivUrl = `http://export.arxiv.org/api/query?search_query=cat:${category}&start=0&max_results=${maxResults}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+  const arxivUrl =
+    `http://export.arxiv.org/api/query?search_query=cat:${category}` +
+    `&start=0&max_results=${maxResults}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
 
   try {
     // Await the HTTP request and response
@@ -63,10 +68,13 @@ export async function fetchRecentPapersArxivArxivCategory(
       link: entry.id,
     }));
 
-    // Only keep papers published in the last 24 hours
-    const oneDayAgo = new Date(Date.now() - lookBackDays * 24 * 60 * 60 * 1000);
+    // Only keep papers published within the lookBackDays starting from offsetDays ago
+    const startDate = new Date(
+      Date.now() - (lookBackDays + offsetDays) * 24 * 60 * 60 * 1000
+    );
+    const endDate = new Date(Date.now() - offsetDays * 24 * 60 * 60 * 1000);
     const recentPapers = cleanPapers.filter(
-      (paper) => paper.published > oneDayAgo
+      (paper) => paper.published > startDate && paper.published <= endDate
     );
 
     if (verbose) {
@@ -85,16 +93,18 @@ export async function fetchRecentPapersArxivArxivCategory(
 /**
  * Fetches recent papers from multiple arXiv categories.
  * @param categories - Array of arXiv categories to fetch papers from.
- * @param maxResults - Maximum number of papers to fetch per category (default: 500).
+ * @param maxResults - Maximum number of papers to fetch per category (default: 2000).
  * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @param offsetDays - Number of days to offset the look back period (default: 7).
  * @param dropDuplicatePapers - Whether to remove duplicate papers across categories (default: true).
  * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of unique preprint papers from all specified categories.
  */
 export async function fetchRecentPapersArxiv(
   categories: string[],
-  maxResults: number = 500,
+  maxResults: number = 2_000,
   lookBackDays: number = 1,
+  offsetDays: number = 7,
   dropDuplicatePapers: boolean = true,
   verbose: boolean = false
 ): Promise<PreprintPaper[]> {
@@ -104,6 +114,7 @@ export async function fetchRecentPapersArxiv(
       category,
       maxResults,
       lookBackDays,
+      offsetDays,
       verbose
     );
     allPapers = allPapers.concat(papers);

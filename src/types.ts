@@ -52,7 +52,9 @@ export interface ConfigOptions {
   /** List of bioRxiv categories to fetch papers from (e.g., ["bioinformatics"]). */
   biorxivCategories?: string[];
   /** Number of days to look back for recent papers. */
-  lookBack?: string;
+  lookBackDays?: string;
+  /** Number of days to offset the look back period. */
+  offsetDays?: string;
   /** Maximum number of papers to fetch from arXiv per category. */
   maxResults?: string;
   /** Whether to enable verbose logging during fetching and embedding. */

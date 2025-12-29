@@ -45,8 +45,12 @@ program
     "Number of days to look back for papers (default: 1)."
   )
   .option(
+    "-o --offset <days>",
+    "Number of days to offset the look back period (default: 7)."
+  )
+  .option(
     "-m --max-results <results>",
-    "Maximum number of papers to fetch from arxiv (default: 500)."
+    "Maximum number of papers to fetch from arxiv (default: 2000)."
   )
   .option(
     "-v --verbose",
@@ -60,8 +64,9 @@ program
     const arxivCategories = config.arxivCategories;
     const biorxivCategories = config.biorxivCategories;
     const seedFolder = config.seedFolder;
-    const lookBackDays = parseInt(config.lookBack ?? "1");
-    const maxResults = parseInt(config.maxResults ?? "500");
+    const lookBackDays = parseInt(config.lookBackDays ?? "1");
+    const offsetDays = parseInt(config.offsetDays ?? "7");
+    const maxResults = parseInt(config.maxResults ?? "2000");
     const verbose = options.verbose ?? false;
 
     // Validate required options
@@ -92,6 +97,7 @@ program
       arxivCategories,
       maxResults,
       lookBackDays,
+      offsetDays,
       true, // drop duplicate papers
       verbose
     );
@@ -102,6 +108,7 @@ program
       ...(await fetchRecentPapersBiorxiv(
         biorxivCategories,
         lookBackDays,
+        offsetDays,
         true, // drop duplicate papers
         verbose
       ))

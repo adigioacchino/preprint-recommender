@@ -61,7 +61,8 @@ This file should have the following structure (all fields are optional):
   "seedFolder": "./seed_papers",
   "arxivCategories": ["cs.AI", "cs.LG"],
   "biorxivCategories": ["bioinformatics", "genomics"],
-  "lookBack": "1",
+  "lookBackDays": "1",
+  "offsetDays": "7",
   "maxResults": "600",
   "verbose": true
 }
@@ -80,7 +81,8 @@ You can run it with the following options:
 - `--arxiv-categories <categories>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
 - `--biorxiv-categories <categories>`: Space-separated list of bioRxiv categories to fetch papers from (e.g., bioinformatics genomics).
 - `-l --look-back <days>`: Number of days to look back for papers (default: 1).
-- `-m --max-results <results>`: Maximum number of papers to fetch (default: 500).
+- `--offset-days <days>`: Number of days to offset the look back period (default: 7).
+- `-m --max-results <results>`: Maximum number of papers to fetch from Arxiv in each query (default: 2000).
 - `-v --verbose`: Enable verbose logging.
 
 One between `--arxiv-categories` and `--biorxiv-categories` must be provided.
@@ -90,7 +92,19 @@ Example:
 npx preprint-recommender run -s .\seed_papers\ --arxiv-categories cs.AI --biorxiv-categories bioinformatics
 ```
 
-This will fetch the latest 50 papers that have been uploaded to the arXiv in the last day, in the categories cs.AI and cs.LG, and embed them using Google GenAI.
+This will fetch the papers that have been uploaded to the arXiv and bioRxiv in 24h exactly a week ago, in the categories cs.AI (arXiv) and bioinformatics (bioRxiv), embed them using Google GenAI, and compare them to the seed papers in the `.\seed_papers\` folder.
+
+## Remarks about the offset days
+
+The `offsetDays` parameter allows you to specify a delay between the current date and the date range from which papers are fetched.
+This is in practice necessary because preprint servers take some time to index newly uploaded papers.
+In other words, papers uploaded today are generally not immediately available in the preprint server, but become available after a few days.
+And once they become available, their "publication date" is set to the date they were originally uploaded, not the date they were made available.
+
+So, with an `offsetDays` of 0, you are looking for papers uploaded today _that are already available on the preprint server_.
+While this might return some results, it is likely that many papers uploaded today are not yet indexed and thus will not be found today, but will appear if the same query is run a few days later.
+
+By sticking to the default value of 7 days for `offsetDays`, we ensure that we are fetching papers that have been uploaded a week ago and are now available on the preprint servers.
 
 ## How to run tests
 

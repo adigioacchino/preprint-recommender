@@ -3,29 +3,36 @@ import type { PreprintPaper } from "../types.js";
 /**
  * Fetches recent papers from a single bioRxiv category.
  * @param category - The bioRxiv category to fetch papers from (e.g., "bioinformatics").
- * @param daysBack - Number of days to look back for recent papers (default: 1).
+ * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @param offsetDays - Number of days to offset the look back period (default: 7).
  * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of preprint papers from the specified category.
  */
 export async function fetchRecentPapersBiorxivCategory(
   category: string,
-  daysBack: number = 1,
+  lookBackDays: number = 1,
+  offsetDays: number = 7,
   verbose: boolean = false
 ): Promise<PreprintPaper[]> {
   if (verbose) {
     console.log(
-      `Fetching papers uploaded to bioRxiv in the last ${daysBack} days for category: ${category}...`
+      `Fetching papers uploaded to bioRxiv in the last ${lookBackDays} days ` +
+        `with an offset of ${offsetDays} days for category: ${category}...`
     );
   }
 
-  // Today as YYYY-MM-DD and calculate the date 'daysBack' days ago
-  const today = new Date().toISOString().split("T")[0];
+  // Get date strings for the API query
+  // offsetDate is the end date (today - offsetDays)
+  // pastDate is the start date (offsetDate - lookBackDays)
+  const offsetDate = new Date();
+  offsetDate.setDate(offsetDate.getDate() - offsetDays);
+  const offsetDateStr = offsetDate.toISOString().split("T")[0];
   const pastDate = new Date();
-  pastDate.setDate(pastDate.getDate() - (daysBack - 1)); // Include today
+  pastDate.setDate(pastDate.getDate() - (lookBackDays + offsetDays - 1)); // -1 because in query /yyy-mm-dd/yyyy-mm-dd is inclusive
   const pastDateStr = pastDate.toISOString().split("T")[0];
 
   // bioRxiv API URL
-  const baseBiorxivUrl = `https://api.biorxiv.org/details/biorxiv/${pastDateStr}/${today}`;
+  const baseBiorxivUrl = `https://api.biorxiv.org/details/biorxiv/${pastDateStr}/${offsetDateStr}`;
   const categoryParam = `?category=${category}`;
 
   // Fetch and process the data
@@ -75,14 +82,16 @@ export async function fetchRecentPapersBiorxivCategory(
 /**
  * Fetches recent papers from multiple bioRxiv categories.
  * @param categories - Array of bioRxiv categories to fetch papers from.
- * @param daysBack - Number of days to look back for recent papers (default: 1).
+ * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @param offsetDays - Number of days to offset the look back period (default: 7).
  * @param dropDuplicatePapers - Whether to remove duplicate papers across categories (default: true).
  * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of preprint papers from all specified categories.
  */
 export async function fetchRecentPapersBiorxiv(
   categories: string[],
-  daysBack: number = 1,
+  lookBackDays: number = 1,
+  offsetDays: number = 7,
   dropDuplicatePapers: boolean = true,
   verbose: boolean = false
 ): Promise<PreprintPaper[]> {
@@ -91,7 +100,8 @@ export async function fetchRecentPapersBiorxiv(
   for (const category of categories) {
     const papers = await fetchRecentPapersBiorxivCategory(
       category,
-      daysBack,
+      lookBackDays,
+      offsetDays,
       verbose
     );
     allPapers = allPapers.concat(papers);

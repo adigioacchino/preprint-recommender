@@ -46,7 +46,7 @@ describe("Config Loader", () => {
       const configData: ConfigOptions = {
         seedFolder: "./seeds",
         arxivCategories: ["cs.AI", "cs.LG"],
-        lookBack: "3",
+        lookBackDays: "3",
       };
       fs.writeFileSync(configPath, JSON.stringify(configData));
 
@@ -79,7 +79,7 @@ describe("Config Loader", () => {
       const fileConfig: ConfigOptions = {
         seedFolder: "./seeds",
         arxivCategories: ["cs.AI"],
-        lookBack: "5",
+        lookBackDays: "5",
       };
 
       const merged = mergeConfig(fileConfig, {});
@@ -90,17 +90,17 @@ describe("Config Loader", () => {
       const fileConfig: ConfigOptions = {
         seedFolder: "./seeds",
         arxivCategories: ["cs.AI"],
-        lookBack: "5",
+        lookBackDays: "5",
       };
       const cliOptions = {
         seedFolder: "./cli-seeds",
-        lookBack: "10",
+        lookBackDays: "10",
       };
 
       const merged = mergeConfig(fileConfig, cliOptions);
       expect(merged.seedFolder).toBe("./cli-seeds");
       expect(merged.arxivCategories).toEqual(["cs.AI"]);
-      expect(merged.lookBack).toBe("10");
+      expect(merged.lookBackDays).toBe("10");
     });
 
     it("CLI options add new values not in file config", () => {
@@ -136,7 +136,7 @@ describe("Config Loader", () => {
       const configData: ConfigOptions = {
         seedFolder: "./file-seeds",
         arxivCategories: ["cs.AI"],
-        lookBack: "7",
+        lookBackDays: "7",
       };
       fs.writeFileSync(configPath, JSON.stringify(configData));
 
@@ -148,7 +148,7 @@ describe("Config Loader", () => {
       const config = getConfig(cliOptions);
       expect(config.seedFolder).toBe("./cli-seeds");
       expect(config.arxivCategories).toEqual(["cs.AI"]);
-      expect(config.lookBack).toBe("7");
+      expect(config.lookBackDays).toBe("7");
     });
 
     it("works without config file", () => {
