@@ -116,6 +116,6 @@ export async function fetchRecentPapersBiorxiv(
     allPapers = Object.values(uniquePapersMap);
   }
 
-  console.log(`Total papers fetched from bioRxiv: ${allPapers.length}`);
+  console.log(`Total unique papers fetched from bioRxiv: ${allPapers.length}`);
   return allPapers;
 }
