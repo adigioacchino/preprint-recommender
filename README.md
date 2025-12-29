@@ -8,10 +8,12 @@ By leveraging vector embeddings, it allows for filtering and identifying daily p
 ## How to set up daily recommendations via GitHub Actions
 
 You can set up daily recommendations using GitHub Actions.
+In this way, the workflow will run automatically every day, and you will receive a report by email with the most relevant preprints based on your seed papers.
 This requires several conditions to be met:
 
 - You need to have a Google GenAI API key, which you can obtain from free from [Google AI Studio](https://aistudio.google.com/). This key comes with 1000 free embedding requests per day, which should be sufficient for processing daily preprints across various categories.
 - You need to have enough GitHub Actions minutes available in your account. Free accounts have 2000 minutes per month, which should be sufficient for running the daily workflow.
+- If you want to receive the report by email, you will need to give Github Action enough permissions to send you an email. Email reporting is optional but recommended. If you don't set it up, the report will be available as log output of the GitHub Actions workflow.
 
 To set up the GitHub Actions workflow, see the instructions in [`preprint-recommender-runner`](https://github.com/adigioacchino/preprint-recommender-runner).
 
