@@ -215,7 +215,7 @@ program
               paper.title
             }" | similarity above threshold (0-100%): **${paper.rescaledSimilarity.toFixed(
               2
-            )}%** | (link)[${paper.link}]`
+            )}%** | [link](${paper.link})`
           );
           console.log("\n");
         }
