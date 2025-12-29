@@ -83,6 +83,10 @@ program
       );
       process.exit(1);
     }
+
+    // Stage 1: Fetch papers
+    console.log("# Fetching papers from preprint servers");
+
     // Arxiv
     const preprintPapers = await fetchRecentPapersArxiv(
       arxivCategories,
@@ -101,16 +105,19 @@ program
       ))
     );
     console.log(
-      `Fetched ${preprintPapers.length} papers from preprint servers.`
+      `Fetched ${preprintPapers.length} papers from preprint servers in total.`
     );
+    console.log("\n");
 
-    // Load seed papers
+    // Stage 2: Load seed papers
+    console.log("# Loading seed papers");
     const seedPapers = await loadSeedPapers(seedFolder);
     console.log(`Loaded ${seedPapers.length} seed papers.`);
+    console.log("\n");
 
-    // Embed papers
+    // Stage 3: Embed papers
+    console.log("# Embedding papers using Google GenAI");
     // Preprints first
-    console.log("Embedding preprints...");
     const preprintBar = new cliProgress.SingleBar(
       {},
       cliProgress.Presets.shades_classic
@@ -121,9 +128,8 @@ program
       preprintBar.update(index + 1);
     }
     preprintBar.stop();
-    console.log("Preprints embedded.");
+    console.log("✅ Preprints embedded.");
     // Seed papers second
-    console.log("Embedding seed papers...");
     const seedBar = new cliProgress.SingleBar(
       {},
       cliProgress.Presets.shades_classic
@@ -134,17 +140,20 @@ program
       await embedPaper(paper);
     }
     seedBar.stop();
-    console.log("Seed papers embedded.");
-    console.log("All papers have been embedded.");
+    console.log("✅ Seed papers embedded.");
+    console.log("\n");
 
+    // Stage 4: Similarity matching
+    console.log("# Performing similarity matching");
     // Get thresholds for seed papers
     const similarityThreshold = getSimilarityThreshold(seedPapers);
-    console.log(
-      `Computed similarity threshold: ${similarityThreshold.toFixed(4)}`
-    );
+    if (verbose) {
+      console.log(
+        `Computed similarity threshold: ${similarityThreshold.toFixed(4)}`
+      );
+    }
 
     // Find and display closest seed paper for each preprint
-    console.log("Finding closest seed papers for each preprint...");
     const matchingPapers: MatchingPaper[] = [];
     for (const preprint of preprintPapers) {
       const result = getClosestSeed(preprint, seedPapers);
@@ -167,33 +176,37 @@ program
 
     // Print results: matching papers grouped by closest seed paper
     // and sorted by rescaled similarity
-    console.log("Matching papers:");
+    if (matchingPapers.length === 0) {
+      console.log("No matching papers found above the similarity threshold.");
+    } else {
+      console.log("## Matching papers");
 
-    // Group papers by seed title
-    const papersBySeed: Record<string, MatchingPaper[]> = {};
-    for (const paper of matchingPapers) {
-      const seedTitle = paper.closestSeed.title;
-      if (!papersBySeed[seedTitle]) {
-        papersBySeed[seedTitle] = [];
+      // Group papers by seed title
+      const papersBySeed: Record<string, MatchingPaper[]> = {};
+      for (const paper of matchingPapers) {
+        const seedTitle = paper.closestSeed.title;
+        if (!papersBySeed[seedTitle]) {
+          papersBySeed[seedTitle] = [];
+        }
+        papersBySeed[seedTitle].push(paper);
       }
-      papersBySeed[seedTitle].push(paper);
-    }
 
-    // Print grouped results
-    for (const [seedTitle, papers] of Object.entries(papersBySeed)) {
-      console.log(`\nSeed Paper: "${seedTitle}"`);
-      // Sort papers by rescaled similarity descending
-      papers.sort((a, b) => b.rescaledSimilarity - a.rescaledSimilarity);
-      for (const paper of papers) {
-        console.log(
-          `  Preprint: "${
-            paper.title
-          }" - Similarity (0-100%): ${paper.rescaledSimilarity.toFixed(
-            2
-          )}%. Link: ${paper.link}`
-        );
+      // Print grouped results
+      for (const [seedTitle, papers] of Object.entries(papersBySeed)) {
+        console.log(`### Seed Paper: "${seedTitle}"`);
+        // Sort papers by rescaled similarity descending
+        papers.sort((a, b) => b.rescaledSimilarity - a.rescaledSimilarity);
+        for (const paper of papers) {
+          console.log(
+            `  Preprint: "${
+              paper.title
+            }" - Similarity above threshold (0-100%): ${paper.rescaledSimilarity.toFixed(
+              2
+            )}%. Link: ${paper.link}`
+          );
+        }
+        console.log("\n");
       }
-      console.log("\n");
     }
   });
 
