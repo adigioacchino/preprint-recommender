@@ -68,5 +68,5 @@ describe("Arxiv Fetcher", () => {
         ", "
       )}.`
     );
-  }, 15_000); // Increase timeout for this test
+  }, 30_000); // Increase timeout for this test
 });

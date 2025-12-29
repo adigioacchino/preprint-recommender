@@ -59,5 +59,5 @@ describe("Biorxiv Fetcher", () => {
         ", "
       )}.`
     );
-  }, 30_000); // Increase timeout for this test
+  }, 60_000); // Increase timeout for this test
 });
