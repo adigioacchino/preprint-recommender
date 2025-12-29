@@ -46,7 +46,7 @@ jobs:
         run: |
           if [[ -z "${{ secrets.EMAIL_USERNAME }}" || -z "${{ secrets.EMAIL_PASSWORD }}" ]]; then
             echo "email_secrets_present=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Email secrets not found. Skipping email sending step."
+            echo "::warning::Email secrets not found. Skipping email sending step."
           else
             echo "email_secrets_present=true" >> $GITHUB_OUTPUT
           fi
@@ -63,4 +63,4 @@ jobs:
           subject: "Daily Preprint Recommender Report"
           to: ${{ secrets.EMAIL_USERNAME }}
           from: "GitHub Actions <${{ secrets.EMAIL_USERNAME }}>"
-          html_body: file://report.txt
+          html_body: file://${{ github.workspace }}/report.txt
