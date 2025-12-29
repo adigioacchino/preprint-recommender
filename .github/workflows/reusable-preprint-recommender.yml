@@ -6,6 +6,12 @@ on:
       GENAI_API_KEY:
         description: "API key for Google Generative AI"
         required: true
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
 
 jobs:
   run-logic:
@@ -37,9 +43,13 @@ jobs:
       - name: Run preprint-recommender
         run: |
           cd caller-repo
-          npx ../preprint-recommender run -c preprint-recommender-config.json 2>&1 | tee report.txt
+          npx ../preprint-recommender run -c preprint-recommender-config.json 2>&1 | tee ${{ github.workspace }}/report.txt
         env:
           GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
+
+      - name: Tmate session (for debugging)
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
       - name: Check for email secrets
         id: check-email-secrets
@@ -53,7 +63,7 @@ jobs:
 
       - name: Send report via email
         if: steps.check-email-secrets.outputs.email_secrets_present == 'true'
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v7
         with:
           server_address: smtp.gmail.com
           server_port: 465
