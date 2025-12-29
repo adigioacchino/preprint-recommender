@@ -37,6 +37,30 @@ jobs:
       - name: Run preprint-recommender
         run: |
           cd caller-repo
-          npx ../preprint-recommender run -c preprint-recommender-config.json
+          npx ../preprint-recommender run -c preprint-recommender-config.json 2>&1 | tee report.txt
         env:
           GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }}
+
+      - name: Check for email secrets
+        id: check-email-secrets
+        run: |
+          if [[ -z "${{ secrets.EMAIL_USERNAME }}" || -z "${{ secrets.EMAIL_PASSWORD }}" ]]; then
+            echo "email_secrets_present=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Email secrets not found. Skipping email sending step."
+          else
+            echo "email_secrets_present=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send report via email
+        if: steps.check-email-secrets.outputs.email_secrets_present == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Daily Preprint Recommender Report"
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: "GitHub Actions <${{ secrets.EMAIL_USERNAME }}>"
+          html_body: file://report.txt
