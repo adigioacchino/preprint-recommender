@@ -70,13 +70,23 @@ export async function fetchRecentPapersBiorxivCategory(
  */
 export async function fetchRecentPapersBiorxiv(
   categories: string[],
-  daysBack: number = 1
+  daysBack: number = 1,
+  dropDuplicatePapers: boolean = true
 ): Promise<PreprintPaper[]> {
   let allPapers: PreprintPaper[] = [];
 
   for (const category of categories) {
     const papers = await fetchRecentPapersBiorxivCategory(category, daysBack);
     allPapers = allPapers.concat(papers);
+  }
+
+  if (dropDuplicatePapers) {
+    // Remove duplicate papers based on their link
+    const uniquePapersMap: { [link: string]: PreprintPaper } = {};
+    for (const paper of allPapers) {
+      uniquePapersMap[paper.link] = paper;
+    }
+    allPapers = Object.values(uniquePapersMap);
   }
 
   console.log(`Total papers fetched from bioRxiv: ${allPapers.length}`);
