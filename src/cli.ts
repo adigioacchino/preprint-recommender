@@ -95,6 +95,8 @@ program
       true, // drop duplicate papers
       verbose
     );
+    console.log("\n");
+
     // Biorxiv
     preprintPapers.push(
       ...(await fetchRecentPapersBiorxiv(
@@ -104,6 +106,8 @@ program
         verbose
       ))
     );
+    console.log("\n");
+
     console.log(
       `Fetched ${preprintPapers.length} papers from preprint servers in total.`
     );
@@ -129,6 +133,8 @@ program
     }
     preprintBar.stop();
     console.log("✅ Preprints embedded.");
+    console.log("\n");
+
     // Seed papers second
     const seedBar = new cliProgress.SingleBar(
       {},
