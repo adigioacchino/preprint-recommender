@@ -64,3 +64,4 @@ jobs:
           to: ${{ secrets.EMAIL_USERNAME }}
           from: "GitHub Actions <${{ secrets.EMAIL_USERNAME }}>"
           html_body: file://${{ github.workspace }}/report.txt
+          convert_markdown: true
