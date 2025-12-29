@@ -55,4 +55,6 @@ export interface ConfigOptions {
   lookBack?: string;
   /** Maximum number of papers to fetch from arXiv per category. */
   maxResults?: string;
+  /** Whether to enable verbose logging during fetching and embedding. */
+  verbose?: boolean;
 }

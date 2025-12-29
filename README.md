@@ -62,7 +62,8 @@ This file should have the following structure (all fields are optional):
   "arxivCategories": ["cs.AI", "cs.LG"],
   "biorxivCategories": ["bioinformatics", "genomics"],
   "lookBack": "1",
-  "maxResults": "50"
+  "maxResults": "600",
+  "verbose": true
 }
 ```
 

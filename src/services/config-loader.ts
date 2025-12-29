@@ -56,7 +56,9 @@ export function mergeConfig(
   if (cliOptions.maxResults !== undefined) {
     merged.maxResults = cliOptions.maxResults as string;
   }
-
+  if (cliOptions.verbose !== undefined) {
+    merged.verbose = cliOptions.verbose as boolean;
+  }
   return merged;
 }
 
