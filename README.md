@@ -79,7 +79,8 @@ You can run it with the following options:
 - `--arxiv-categories <categories>`: Space-separated list of arXiv categories to fetch papers from (e.g., cs.AI cs.LG).
 - `--biorxiv-categories <categories>`: Space-separated list of bioRxiv categories to fetch papers from (e.g., bioinformatics genomics).
 - `-l --look-back <days>`: Number of days to look back for papers (default: 1).
-- `-m --max-results <results>`: Maximum number of papers to fetch (default: 50).
+- `-m --max-results <results>`: Maximum number of papers to fetch (default: 500).
+- `-v --verbose`: Enable verbose logging.
 
 One between `--arxiv-categories` and `--biorxiv-categories` must be provided.
 Example:

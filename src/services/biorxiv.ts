@@ -4,13 +4,19 @@ import type { PreprintPaper } from "../types.js";
  * Fetches recent papers from a single bioRxiv category.
  * @param category - The bioRxiv category to fetch papers from (e.g., "bioinformatics").
  * @param daysBack - Number of days to look back for recent papers (default: 1).
+ * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of preprint papers from the specified category.
  */
 export async function fetchRecentPapersBiorxivCategory(
   category: string,
-  daysBack: number = 1
+  daysBack: number = 1,
+  verbose: boolean = false
 ): Promise<PreprintPaper[]> {
-  console.log(`Fetching papers uploaded to bioRxiv in the last ${daysBack} days for category: ${category}...`);
+  if (verbose) {
+    console.log(
+      `Fetching papers uploaded to bioRxiv in the last ${daysBack} days for category: ${category}...`
+    );
+  }
 
   // Today as YYYY-MM-DD and calculate the date 'daysBack' days ago
   const today = new Date().toISOString().split("T")[0];
@@ -53,7 +59,11 @@ export async function fetchRecentPapersBiorxivCategory(
       }));
       fetchedPapers = fetchedPapers.concat(pagedPapers);
     }
-    console.log(`Fetched ${fetchedPapers.length} papers from bioRxiv for category: ${category}`);
+    if (verbose) {
+      console.log(
+        `Fetched ${fetchedPapers.length} papers from bioRxiv for category: ${category}`
+      );
+    }
 
     return fetchedPapers;
   } catch (error) {
@@ -66,17 +76,24 @@ export async function fetchRecentPapersBiorxivCategory(
  * Fetches recent papers from multiple bioRxiv categories.
  * @param categories - Array of bioRxiv categories to fetch papers from.
  * @param daysBack - Number of days to look back for recent papers (default: 1).
+ * @param dropDuplicatePapers - Whether to remove duplicate papers across categories (default: true).
+ * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of preprint papers from all specified categories.
  */
 export async function fetchRecentPapersBiorxiv(
   categories: string[],
   daysBack: number = 1,
-  dropDuplicatePapers: boolean = true
+  dropDuplicatePapers: boolean = true,
+  verbose: boolean = false
 ): Promise<PreprintPaper[]> {
   let allPapers: PreprintPaper[] = [];
 
   for (const category of categories) {
-    const papers = await fetchRecentPapersBiorxivCategory(category, daysBack);
+    const papers = await fetchRecentPapersBiorxivCategory(
+      category,
+      daysBack,
+      verbose
+    );
     allPapers = allPapers.concat(papers);
   }
 

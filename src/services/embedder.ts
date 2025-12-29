@@ -86,9 +86,13 @@ export async function embedPaper(
       return;
     } catch (error) {
       if (isRateLimitError(error)) {
-        console.log(
-          `Rate limit hit, waiting ${RATE_LIMIT_WAIT_MS / 1000} seconds before retrying...`
-        );
+        if (verbose) {
+          console.log(
+            `Rate limit hit, waiting ${
+              RATE_LIMIT_WAIT_MS / 1000
+            } seconds before retrying...`
+          );
+        }
         await sleep(RATE_LIMIT_WAIT_MS);
         // Continue to retry
       } else {

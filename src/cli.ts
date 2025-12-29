@@ -48,6 +48,10 @@ program
     "-m --max-results <results>",
     "Maximum number of papers to fetch from arxiv (default: 500)."
   )
+  .option(
+    "-v --verbose",
+    "Enable verbose logging during fetching and embedding."
+  )
   .action(async (options) => {
     // Load config from file and merge with CLI options
     const config = getConfig(options);
@@ -58,6 +62,7 @@ program
     const seedFolder = config.seedFolder;
     const lookBackDays = parseInt(config.lookBack ?? "1");
     const maxResults = parseInt(config.maxResults ?? "500");
+    const verbose = options.verbose ?? false;
 
     // Validate required options
     if (!seedFolder) {
@@ -82,11 +87,18 @@ program
     const preprintPapers = await fetchRecentPapersArxiv(
       arxivCategories,
       maxResults,
-      lookBackDays
+      lookBackDays,
+      true, // drop duplicate papers
+      verbose
     );
     // Biorxiv
     preprintPapers.push(
-      ...(await fetchRecentPapersBiorxiv(biorxivCategories, lookBackDays))
+      ...(await fetchRecentPapersBiorxiv(
+        biorxivCategories,
+        lookBackDays,
+        true, // drop duplicate papers
+        verbose
+      ))
     );
     console.log(
       `Fetched ${preprintPapers.length} papers from preprint servers.`

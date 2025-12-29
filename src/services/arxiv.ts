@@ -6,14 +6,20 @@ import type { PreprintPaper } from "../types.js";
  * @param category - The arXiv category to fetch papers from (e.g., "cs.AI").
  * @param maxResults - Maximum number of papers to fetch (default: 500).
  * @param lookBackDays - Number of days to look back for recent papers (default: 1).
+ * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of preprint papers from the specified category.
  */
 export async function fetchRecentPapersArxivArxivCategory(
   category: string,
   maxResults: number = 500,
-  lookBackDays: number = 1
+  lookBackDays: number = 1,
+  verbose: boolean = false
 ): Promise<PreprintPaper[]> {
-  console.log(`Fetching papers uploaded to Arxiv in the last ${lookBackDays} days for category: ${category}...`);
+  if (verbose) {
+    console.log(
+      `Fetching papers uploaded to Arxiv in the last ${lookBackDays} days for category: ${category}...`
+    );
+  }
   // Arxiv API query
   // Sorting rules
   const sortBy = "submittedDate";
@@ -63,9 +69,11 @@ export async function fetchRecentPapersArxivArxivCategory(
       (paper) => paper.published > oneDayAgo
     );
 
-    console.log(
-      `Fetched ${recentPapers.length} recent papers from Arxiv in category ${category}.`
-    );
+    if (verbose) {
+      console.log(
+        `Fetched ${recentPapers.length} recent papers from Arxiv in category ${category}.`
+      );
+    }
 
     return recentPapers;
   } catch (error) {
@@ -80,20 +88,23 @@ export async function fetchRecentPapersArxivArxivCategory(
  * @param maxResults - Maximum number of papers to fetch per category (default: 500).
  * @param lookBackDays - Number of days to look back for recent papers (default: 1).
  * @param dropDuplicatePapers - Whether to remove duplicate papers across categories (default: true).
+ * @param verbose - Whether to log messages during fetching (default: false).
  * @returns Array of unique preprint papers from all specified categories.
  */
 export async function fetchRecentPapersArxiv(
   categories: string[],
   maxResults: number = 500,
   lookBackDays: number = 1,
-  dropDuplicatePapers: boolean = true
+  dropDuplicatePapers: boolean = true,
+  verbose: boolean = false
 ): Promise<PreprintPaper[]> {
   let allPapers: PreprintPaper[] = [];
   for (const category of categories) {
     const papers = await fetchRecentPapersArxivArxivCategory(
       category,
       maxResults,
-      lookBackDays
+      lookBackDays,
+      verbose
     );
     allPapers = allPapers.concat(papers);
     // Sleep for 3 seconds to avoid hitting rate limits
