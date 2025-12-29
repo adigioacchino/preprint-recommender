@@ -6,12 +6,6 @@ on:
       GENAI_API_KEY:
         description: "API key for Google Generative AI"
         required: true
-    inputs:
-      debug_enabled:
-        type: boolean
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
-        required: false
-        default: false
 
 jobs:
   run-logic:
@@ -49,7 +43,6 @@ jobs:
 
       - name: Tmate session (for debugging)
         uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
       - name: Check for email secrets
         id: check-email-secrets
