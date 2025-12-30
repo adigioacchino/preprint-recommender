@@ -133,3 +133,10 @@ npm test
 ```
 
 The tests are configured to run in non-watch mode and will load the environment variables from your `.env` file automatically.
+
+## Tagging strategy
+
+As this project exposes a GitHub reusable workflow, we use two types of tags:
+
+- **Immutable tags** of the form `vX.Y.Z` (e.g., `v1.0.0`, `v1.2.3`), which are never modified after creation. These tags follow semantic versioning (in a broad sense, that is changes to code but also to GitHub workflows and other changes trigger a new version). These tags shouldn't be used in the reusable workflow, as they would require frequent updates.
+- **Floating tags** of the form `vX` (e.g., `v1`, `v2`), which are updated to point to the latest minor/patch version in the corresponding major version line. For instance, if the latest version is `v1.2.3`, then the floating tag `v1` will point to `v1.2.3`, then if a new version `v1.3.0` is released, the floating tag `v1` will be updated to point to `v1.3.0`. These floating tags should be used in the reusable workflow, as they allow for automatic updates to the latest version in the major version line.
