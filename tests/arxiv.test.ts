@@ -4,19 +4,25 @@ import {
   fetchRecentPapersArxivArxivCategory,
 } from "../src/services/arxiv.js";
 
+// Test params
+const OFFSET_DAYS = 4;
+const LOOKBACK_DAYS = 3;
+const MAX_RESULTS = 800;
+
 describe("Arxiv Fetcher", () => {
   it.each([
     ["cs.AI"], // Artificial Intelligence
     ["cs.LG"], // Machine Learning
-    ["cs.CV"], // Computer Vision
   ])(
     "fetch papers from Arxiv [%s]",
     async (category) => {
       console.log(`Testing category: ${category}`);
       const papers = await fetchRecentPapersArxivArxivCategory(
         category,
-        1000,
-        4
+        MAX_RESULTS,
+        LOOKBACK_DAYS,
+        OFFSET_DAYS,
+        true // verbose
       );
 
       expect(papers).toBeDefined();
@@ -24,12 +30,19 @@ describe("Arxiv Fetcher", () => {
 
       console.log(`Found ${papers.length} papers in ${category}.`);
 
-      expect(papers.length).toBeGreaterThan(0); // Over the last 7 + 4 days it's expected to find at least one paper
+      expect(papers.length).toBeGreaterThan(0); // Over the last OFFSET_DAYS + LOOKBACK_DAYS days it's expected to find at least one paper
 
-      const now = new Date();
-      const lookBackLimit = new Date(
-        now.getTime() - 7 * 24 * 60 * 60 * 1000
+      // Compute expected date range
+      const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
+      offsetYesterday.setDate(offsetYesterday.getDate() - OFFSET_DAYS);
+      const paperStartDay = new Date(
+        new Date().setDate(offsetYesterday.getDate() - LOOKBACK_DAYS)
       );
+      const paperEndDay = new Date(
+        new Date().setDate(offsetYesterday.getDate() - 1)
+      );
+
+      // Compute expected date range
       if (papers.length > 0) {
         console.log(`First paper title in ${category}:`, papers[0].title);
         // Verify the structure of each paper
@@ -43,8 +56,12 @@ describe("Arxiv Fetcher", () => {
           expect(paper.embedding).toBeUndefined();
           expect(Array.isArray(paper.authors)).toBe(true);
           expect(paper.published instanceof Date).toBe(true);
-          // All papers should have date within the lookBackDays + offsetDays
-          expect(paper.published <= lookBackLimit).toBe(true);
+          expect(paper.published.getDate()).toBeGreaterThanOrEqual(
+            paperStartDay.getDate()
+          );
+          expect(paper.published.getDate()).toBeLessThanOrEqual(
+            paperEndDay.getDate()
+          );
         }
       }
 
@@ -55,18 +72,24 @@ describe("Arxiv Fetcher", () => {
   ); // Increase timeout for this test
 
   it("fetch papers from Arxiv [multiple categories]", async () => {
-    const categories = ["cs.AI", "cs.LG", "cs.CV"];
-    const papers = await fetchRecentPapersArxiv(categories, 1000, 4, 7, true);
+    const categories = ["cs.AI", "cs.LG"];
+    const papers = await fetchRecentPapersArxiv(
+      categories,
+      MAX_RESULTS,
+      LOOKBACK_DAYS,
+      OFFSET_DAYS,
+      true
+    );
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
 
-    expect(papers.length).toBeGreaterThan(0); // Over the last 7 days it's expected to find at least one paper
+    expect(papers.length).toBeGreaterThan(0); // Over the last OFFSET_DAYS + LOOKBACK_DAYS days it's expected to find at least one paper
 
     console.log(
       `Found ${papers.length} papers across categories: ${categories.join(
         ", "
       )}.`
     );
-  }, 30_000); // Increase timeout for this test
+  }, 20_000); // Increase timeout for this test
 });

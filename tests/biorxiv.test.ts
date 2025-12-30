@@ -4,24 +4,39 @@ import {
   fetchRecentPapersBiorxivCategory,
 } from "../src/services/biorxiv.js";
 
+// Test params
+const OFFSET_DAYS = 4;
+const LOOKBACK_DAYS = 3;
+
 describe("Biorxiv Fetcher", () => {
   it.each([["bioinformatics"], ["microbiology"]])(
     "fetch papers from bioRxiv [%s]",
     async (category) => {
       console.log(`Testing category: ${category}`);
-      const papers = await fetchRecentPapersBiorxivCategory(category, 4);
+      const papers = await fetchRecentPapersBiorxivCategory(
+        category,
+        LOOKBACK_DAYS,
+        OFFSET_DAYS,
+        true // verbose
+      );
 
       expect(papers).toBeDefined();
       expect(Array.isArray(papers)).toBe(true);
 
       console.log(`Found ${papers.length} papers in ${category}.`);
 
-      expect(papers.length).toBeGreaterThan(0); // Over the last 7 + 4 days it's expected to find at least one paper
+      expect(papers.length).toBeGreaterThan(0); // Over the last OFFSET_DAYS + LOOKBACK_DAYS days it's expected to find at least one paper
 
-      const now = new Date();
-      const lookBackLimit = new Date(
-        now.getTime() - 7 * 24 * 60 * 60 * 1000
+      // Compute expected date range
+      const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
+      offsetYesterday.setDate(offsetYesterday.getDate() - OFFSET_DAYS);
+      const paperStartDay = new Date(
+        new Date().setDate(offsetYesterday.getDate() - LOOKBACK_DAYS)
       );
+      const paperEndDay = new Date(
+        new Date().setDate(offsetYesterday.getDate() - 1)
+      );
+
       if (papers.length > 0) {
         console.log(`First paper title in ${category}:`, papers[0].title);
         // Verify the structure of each paper
@@ -34,8 +49,12 @@ describe("Biorxiv Fetcher", () => {
           expect(paper.embedding).toBeUndefined();
           expect(Array.isArray(paper.authors)).toBe(true);
           expect(paper.published instanceof Date).toBe(true);
-          // All papers should have date within the lookBackDays + offsetDays
-          expect(paper.published <= lookBackLimit).toBe(true);
+          expect(paper.published.getDate()).toBeGreaterThanOrEqual(
+            paperStartDay.getDate()
+          );
+          expect(paper.published.getDate()).toBeLessThanOrEqual(
+            paperEndDay.getDate()
+          );
         }
       }
 
@@ -47,13 +66,16 @@ describe("Biorxiv Fetcher", () => {
 
   it("fetch papers from bioRxiv [multiple categories]", async () => {
     const categories = ["bioinformatics", "microbiology"];
-    const papers = await fetchRecentPapersBiorxiv(categories, 7);
+    const papers = await fetchRecentPapersBiorxiv(
+      categories,
+      LOOKBACK_DAYS,
+      OFFSET_DAYS
+    );
 
     expect(papers).toBeDefined();
     expect(Array.isArray(papers)).toBe(true);
 
-    expect(papers.length).toBeGreaterThan(0); // Over the last 7 days it's expected to find at least one paper
-
+    expect(papers.length).toBeGreaterThan(0); // Over the last OFFSET_DAYS + LOOKBACK_DAYS days it's expected to find at least one paper
     console.log(
       `Found ${papers.length} papers across categories: ${categories.join(
         ", "

@@ -30,6 +30,11 @@ export async function fetchRecentPapersBiorxivCategory(
   const pastDate = new Date();
   pastDate.setDate(pastDate.getDate() - (lookBackDays + offsetDays - 1)); // -1 because in query /yyy-mm-dd/yyyy-mm-dd is inclusive
   const pastDateStr = pastDate.toISOString().split("T")[0];
+  if (verbose) {
+    console.log(
+      `Filtering papers published between ${pastDateStr} and ${offsetDateStr}.`
+    );
+  }
 
   // bioRxiv API URL
   const baseBiorxivUrl = `https://api.biorxiv.org/details/biorxiv/${pastDateStr}/${offsetDateStr}`;

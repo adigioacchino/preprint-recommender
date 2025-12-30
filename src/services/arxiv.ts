@@ -69,12 +69,26 @@ export async function fetchRecentPapersArxivArxivCategory(
     }));
 
     // Only keep papers published within the lookBackDays starting from offsetDays ago
-    const startDate = new Date(
-      Date.now() - (lookBackDays + offsetDays) * 24 * 60 * 60 * 1000
+    // Only the day is considered, not the exact time
+    // This is so that if offsetDays is 0 and lookBackDays is 1, we get all papers
+    // published yesterday, independent of the current time of day.
+    const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
+    offsetYesterday.setDate(offsetYesterday.getDate() - offsetDays);
+    const startDay = new Date(
+      new Date().setDate(offsetYesterday.getDate() - lookBackDays)
     );
-    const endDate = new Date(Date.now() - offsetDays * 24 * 60 * 60 * 1000);
+    const endDay = new Date(new Date().setDate(offsetYesterday.getDate() - 1));
+    if (verbose) {
+      console.log(
+        `Filtering papers published between ${
+          startDay.toISOString().split("T")[0]
+        } and ${endDay.toISOString().split("T")[0]}.`
+      );
+    }
+
+    // Filter papers within the date range
     const recentPapers = cleanPapers.filter(
-      (paper) => paper.published > startDate && paper.published <= endDate
+      (paper) => paper.published > startDay && paper.published <= endDay
     );
 
     if (verbose) {
