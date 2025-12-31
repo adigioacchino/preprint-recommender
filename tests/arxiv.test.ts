@@ -41,6 +41,7 @@ describe("Arxiv Fetcher", () => {
       const paperEndDay = new Date(
         new Date().setDate(offsetYesterday.getDate() - 1)
       );
+      paperEndDay.setHours(23, 59, 59, 999);
 
       // Compute expected date range
       if (papers.length > 0) {

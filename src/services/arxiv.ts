@@ -78,6 +78,7 @@ export async function fetchRecentPapersArxivArxivCategory(
       new Date().setDate(offsetYesterday.getDate() - lookBackDays)
     );
     const endDay = new Date(new Date().setDate(offsetYesterday.getDate() - 1));
+    endDay.setHours(23, 59, 59, 999); // Include the entire end day
     if (verbose) {
       console.log(
         `Filtering papers published between ${
