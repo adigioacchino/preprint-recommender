@@ -21,23 +21,26 @@ export async function fetchRecentPapersBiorxivCategory(
     );
   }
 
+  // Only the day is considered, not the exact time
+  // This is so that if offsetDays is 0 and lookBackDays is 1, we get all papers
+  // published yesterday, independent of the current time of day.
+  const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
+  offsetYesterday.setDate(offsetYesterday.getDate() - offsetDays);
+  const startDay = new Date(
+    new Date().setDate(offsetYesterday.getDate() - lookBackDays)
+  );
+  const endDay = new Date(new Date().setDate(offsetYesterday.getDate() - 1));
   // Get date strings for the API query
-  // offsetDate is the end date (today - offsetDays)
-  // pastDate is the start date (offsetDate - lookBackDays)
-  const offsetDate = new Date();
-  offsetDate.setDate(offsetDate.getDate() - offsetDays);
-  const offsetDateStr = offsetDate.toISOString().split("T")[0];
-  const pastDate = new Date();
-  pastDate.setDate(pastDate.getDate() - (lookBackDays + offsetDays - 1)); // -1 because in query /yyy-mm-dd/yyyy-mm-dd is inclusive
-  const pastDateStr = pastDate.toISOString().split("T")[0];
+  const startDayStr = startDay.toISOString().split("T")[0];
+  const endDayStr = endDay.toISOString().split("T")[0];
   if (verbose) {
     console.log(
-      `Filtering papers published between ${pastDateStr} and ${offsetDateStr}.`
+      `Filtering papers published between ${startDayStr} and ${endDayStr}.`
     );
   }
 
   // bioRxiv API URL
-  const baseBiorxivUrl = `https://api.biorxiv.org/details/biorxiv/${pastDateStr}/${offsetDateStr}`;
+  const baseBiorxivUrl = `https://api.biorxiv.org/details/biorxiv/${startDayStr}/${endDayStr}`;
   const categoryParam = `?category=${category}`;
 
   // Fetch and process the data
