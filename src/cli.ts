@@ -2,6 +2,7 @@
 import { Command } from "commander";
 import cliProgress from "cli-progress";
 
+import type { MatchingPaper } from "./types.js";
 import { fetchRecentPapersArxiv } from "./services/arxiv.js";
 import { fetchRecentPapersBiorxiv } from "./services/biorxiv.js";
 import { getConfig } from "./services/config-loader.js";
@@ -11,7 +12,7 @@ import {
   getClosestSeed,
   getSimilarityThreshold,
 } from "./services/similarity.js";
-import type { MatchingPaper } from "./types.js";
+import { getPreprintDateRange } from "./utils/date.js";
 
 const program = new Command();
 
@@ -91,6 +92,26 @@ program
 
     // Stage 1: Fetch papers
     console.log("# Fetching papers from preprint servers");
+
+    // Get days we are fetching papers for
+    const [startDay, endDay] = getPreprintDateRange(lookBackDays, offsetDays);
+    const startDayStr =
+      startDay.getFullYear() +
+      "-" +
+      String(startDay.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(startDay.getDate()).padStart(2, "0");
+    const endDayStr =
+      endDay.getFullYear() +
+      "-" +
+      String(endDay.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(endDay.getDate()).padStart(2, "0");
+
+    console.log(
+      `Looking for papers published between ${startDayStr} and ${endDayStr} (included).`
+    );
+    console.log("\n");
 
     // Arxiv
     const preprintPapers = await fetchRecentPapersArxiv(
