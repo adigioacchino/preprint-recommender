@@ -1,6 +1,6 @@
 {
   "name": "preprint-recommender",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A package to find latest papers from arXiv that are similar to some 'seed papers' of interest.",
   "scripts": {
     "test": "vitest run",
