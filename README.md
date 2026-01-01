@@ -85,7 +85,7 @@ You can run it with the following options:
 - `-m --max-results <results>`: Maximum number of papers to fetch from Arxiv in each query (default: 2000).
 - `-v --verbose`: Enable verbose logging.
 
-One between `--arxiv-categories` and `--biorxiv-categories` must be provided.
+One between `--arxiv-categories` and `--biorxiv-categories` must be provided (or given in the config file).
 Example:
 
 ```bash
