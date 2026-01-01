@@ -1,4 +1,5 @@
 import type { PreprintPaper } from "../types.js";
+import { getPreprintDateRange } from "../utils/date.js";
 
 /**
  * Fetches recent papers from a single bioRxiv category.
@@ -21,18 +22,23 @@ export async function fetchRecentPapersBiorxivCategory(
     );
   }
 
-  // Only the day is considered, not the exact time
-  // This is so that if offsetDays is 0 and lookBackDays is 1, we get all papers
-  // published yesterday, independent of the current time of day.
-  const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
-  offsetYesterday.setDate(offsetYesterday.getDate() - offsetDays);
-  const startDay = new Date(
-    new Date().setDate(offsetYesterday.getDate() - lookBackDays)
-  );
-  const endDay = new Date(new Date().setDate(offsetYesterday.getDate() - 1));
-  // Get date strings for the API query
-  const startDayStr = startDay.toISOString().split("T")[0];
-  const endDayStr = endDay.toISOString().split("T")[0];
+  // Get date range as strings in yyyy-mm-dd format
+  const [startDay, endDay] = getPreprintDateRange(lookBackDays, offsetDays);
+  // I cannot use toISOString() because this converts to UTC, which may change
+  // the date. In this way, I ensure the local date is preserved.
+  const startDayStr =
+    startDay.getFullYear() +
+    "-" +
+    String(startDay.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(startDay.getDate()).padStart(2, "0");
+  const endDayStr =
+    endDay.getFullYear() +
+    "-" +
+    String(endDay.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(endDay.getDate()).padStart(2, "0");
+
   if (verbose) {
     console.log(
       `Filtering papers published between ${startDayStr} and ${endDayStr}.`

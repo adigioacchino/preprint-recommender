@@ -3,6 +3,7 @@ import {
   fetchRecentPapersBiorxiv,
   fetchRecentPapersBiorxivCategory,
 } from "../src/services/biorxiv.js";
+import { getPreprintDateRange } from "../src/utils/date.js";
 
 // Test params
 const OFFSET_DAYS = 4;
@@ -27,14 +28,10 @@ describe("Biorxiv Fetcher", () => {
 
       expect(papers.length).toBeGreaterThan(0); // Over the last OFFSET_DAYS + LOOKBACK_DAYS days it's expected to find at least one paper
 
-      // Compute expected date range
-      const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
-      offsetYesterday.setDate(offsetYesterday.getDate() - OFFSET_DAYS);
-      const paperStartDay = new Date(
-        new Date().setDate(offsetYesterday.getDate() - LOOKBACK_DAYS)
-      );
-      const paperEndDay = new Date(
-        new Date().setDate(offsetYesterday.getDate() - 1)
+      // Get expected date range
+      const [paperStartDay, paperEndDay] = getPreprintDateRange(
+        LOOKBACK_DAYS,
+        OFFSET_DAYS
       );
 
       if (papers.length > 0) {

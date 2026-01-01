@@ -3,6 +3,7 @@ import {
   fetchRecentPapersArxiv,
   fetchRecentPapersArxivArxivCategory,
 } from "../src/services/arxiv.js";
+import { getPreprintDateRange } from "../src/utils/date.js";
 
 // Test params
 const OFFSET_DAYS = 4;
@@ -32,18 +33,12 @@ describe("Arxiv Fetcher", () => {
 
       expect(papers.length).toBeGreaterThan(0); // Over the last OFFSET_DAYS + LOOKBACK_DAYS days it's expected to find at least one paper
 
-      // Compute expected date range
-      const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
-      offsetYesterday.setDate(offsetYesterday.getDate() - OFFSET_DAYS);
-      const paperStartDay = new Date(
-        new Date().setDate(offsetYesterday.getDate() - LOOKBACK_DAYS)
+      // Get expected date range
+      const [paperStartDay, paperEndDay] = getPreprintDateRange(
+        LOOKBACK_DAYS,
+        OFFSET_DAYS
       );
-      const paperEndDay = new Date(
-        new Date().setDate(offsetYesterday.getDate() - 1)
-      );
-      paperEndDay.setHours(23, 59, 59, 999);
 
-      // Compute expected date range
       if (papers.length > 0) {
         console.log(`First paper title in ${category}:`, papers[0].title);
         // Verify the structure of each paper

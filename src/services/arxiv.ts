@@ -1,5 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
+
 import type { PreprintPaper } from "../types.js";
+import { getPreprintDateRange } from "../utils/date.js";
 
 /**
  * Fetches recent papers from a single arXiv category.
@@ -68,17 +70,8 @@ export async function fetchRecentPapersArxivArxivCategory(
       link: entry.id,
     }));
 
-    // Only keep papers published within the lookBackDays starting from offsetDays ago
-    // Only the day is considered, not the exact time
-    // This is so that if offsetDays is 0 and lookBackDays is 1, we get all papers
-    // published yesterday, independent of the current time of day.
-    const offsetYesterday = new Date(new Date().setHours(0, 0, 0, 0));
-    offsetYesterday.setDate(offsetYesterday.getDate() - offsetDays);
-    const startDay = new Date(
-      new Date().setDate(offsetYesterday.getDate() - lookBackDays)
-    );
-    const endDay = new Date(new Date().setDate(offsetYesterday.getDate() - 1));
-    endDay.setHours(23, 59, 59, 999); // Include the entire end day
+    // Get date range for filtering
+    const [startDay, endDay] = getPreprintDateRange(lookBackDays, offsetDays);
     if (verbose) {
       console.log(
         `Filtering papers published between ${
