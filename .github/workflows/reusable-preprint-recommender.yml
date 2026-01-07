@@ -6,6 +6,12 @@ on:
       GENAI_API_KEY:
         description: "API key for Google Generative AI"
         required: true
+      EMAIL_USERNAME:
+        description: "Email username for sending reports"
+        required: false
+      EMAIL_PASSWORD:
+        description: "Email password for sending reports"
+        required: false
 
 jobs:
   run-logic:
