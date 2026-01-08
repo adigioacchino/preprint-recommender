@@ -61,6 +61,45 @@ describe("Biorxiv Fetcher", () => {
     30_000
   ); // Increase timeout for this test
 
+
+  it("fetch papers from bioRxiv with multiple-word category", async () => {
+    // use the underscore first
+    const category = "cancer_biology";
+    const papers = await fetchRecentPapersBiorxivCategory(
+      category,
+      LOOKBACK_DAYS,
+      OFFSET_DAYS,
+      true // verbose
+    );
+    expect(papers).toBeDefined();
+    expect(Array.isArray(papers)).toBe(true);
+    expect(papers.length).toBeGreaterThan(0);
+
+    // Now use space
+    const categoryWithSpace = "cancer biology";
+    const papersWithSpace = await fetchRecentPapersBiorxivCategory(
+      categoryWithSpace,
+      LOOKBACK_DAYS,
+      OFFSET_DAYS,
+      true // verbose
+    );
+    expect(papersWithSpace).toBeDefined();
+    expect(Array.isArray(papersWithSpace)).toBe(true);
+    expect(papersWithSpace).toEqual(papers);
+
+    // Now use minus
+    const categoryWithMinus = "cancer-biology";
+    const papersWithMinus = await fetchRecentPapersBiorxivCategory(
+      categoryWithMinus,
+      LOOKBACK_DAYS,
+      OFFSET_DAYS,
+      true // verbose
+    );
+    expect(papersWithMinus).toBeDefined();
+    expect(Array.isArray(papersWithMinus)).toBe(true);
+    expect(papersWithMinus).toEqual(papers);
+  }, 90_000); // Increase timeout for this test
+
   it("fetch papers from bioRxiv [multiple categories]", async () => {
     const categories = ["bioinformatics", "microbiology"];
     const papers = await fetchRecentPapersBiorxiv(

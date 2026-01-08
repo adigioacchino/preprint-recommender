@@ -22,6 +22,9 @@ export async function fetchRecentPapersBiorxivCategory(
     );
   }
 
+  // Format category: replace spaces and minus with underscores
+  category = category.replace(/[\s-]/g, "_");
+
   // Get date range as strings in yyyy-mm-dd format
   const [startDay, endDay] = getPreprintDateRange(lookBackDays, offsetDays);
   // I cannot use toISOString() because this converts to UTC, which may change
